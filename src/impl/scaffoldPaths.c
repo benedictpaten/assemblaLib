@@ -13,8 +13,8 @@
 
 static stHash *getMaximalScaffoldPathLengthsP(stList *haplotypePaths, stHash *haplotypePathToScaffoldPathHash,
         stList *eventStrings, CapCodeParameters *capCodeParameters) {
-    stHash *haplotypeToMaximalHaplotypeLengthHash = buildMaximalHaplotypeToMaximalHaplotypeLength(haplotypePaths);
-    stHash *segmentToMaximalHaplotypePathHash = buildSegmentToMaximalHaplotypePathHash(haplotypePaths);
+    stHash *haplotypeToMaximalHaplotypeLengthHash = buildContigPathToContigPathLengthHash(haplotypePaths);
+    stHash *segmentToMaximalHaplotypePathHash = buildSegmentToContigPathHash(haplotypePaths);
     for (int32_t i = 0; i < stList_length(haplotypePaths); i++) {
         stSortedSet *bucket = stSortedSet_construct();
         stHash_insert(haplotypePathToScaffoldPathHash, stList_get(haplotypePaths, i), bucket);
@@ -117,7 +117,7 @@ static void debugMaximalHaplotypePathLengthsP(Cap *cap, stList *haplotypePath,
 
 static void debugMaximalHaplotypePathLengths(stList *haplotypePaths, stHash *haplotypePathToScaffoldPathHash,
         stHash *haplotypeToMaximalHaplotypeLengthHash, stList *eventStrings, CapCodeParameters *capCodeParameters) {
-    stHash *segmentToMaximalHaplotypePathHash = buildSegmentToMaximalHaplotypePathHash(haplotypePaths);
+    stHash *segmentToMaximalHaplotypePathHash = buildSegmentToContigPathHash(haplotypePaths);
     for (int32_t i = 0; i < stList_length(haplotypePaths); i++) {
         stList *haplotypePath = stList_get(haplotypePaths, i);
         assert(stList_length(haplotypePath) > 0);

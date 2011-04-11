@@ -12,6 +12,10 @@
 #include "sonLib.h"
 
 /*
+ * Basic library of functions used in tracing paths through the graph.
+ */
+
+/*
  * Returns non-zero iff the end contains a cap whose event is labelled with the given event string.
  */
 bool hasCapInEvent(End *end, const char *eventString);
@@ -32,7 +36,7 @@ bool hasCapInEvents(End *end, stList *eventStrings);
 Cap *getTerminalCap(Cap *cap);
 
 /*
- * Returns non-zero iff the terminal adjacency is represented in the two haplotypes.
+ * Returns non-zero iff the terminal adjacency is represented in the given set of events, which are specified by the set of event strings.
  */
 bool trueAdjacency(Cap *cap, stList *eventStrings);
 
@@ -42,7 +46,7 @@ bool trueAdjacency(Cap *cap, stList *eventStrings);
 Segment *getAdjacentCapsSegment(Cap *cap);
 
 /*
- * Returns non-zero iff the caps are adjacent, initialising seperation distance with the distance
+ * Returns non-zero iff the caps are adjacent, initialising separation distance with the distance
  * between them.
  */
 bool capsAreAdjacent(Cap *cap1, Cap *cap2, int32_t *separationDistance);
@@ -54,10 +58,10 @@ bool endsAreConnected(End *end1, End *end2, stList *eventStrings);
 
 /*
  * Returns non-zero iff the ends are adjacent by the sequences with the given events. If they
- * are minimumDistanceBetweenHaplotypeCaps is initialised to the minimum distance.
+ * are minimumDistanceBetweenCaps is initialised to the minimum distance.
  */
 bool endsAreAdjacent(End *end1, End *end2,
-        int32_t *minimumDistanceBetweenHaplotypeCaps,
+        int32_t *minimumDistanceBetweenCaps,
         stList *eventStrings);
 
 #endif /* ASSEMBLY_STRUCTURES_H_ */

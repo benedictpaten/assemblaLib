@@ -128,7 +128,7 @@ static void getMaximalHaplotypePathsCheck(Flower *flower,
     flower_destructGroupIterator(groupIt);
 }
 
-stList *getMaximalHaplotypePaths(Flower *flower, const char *eventString, stList *eventStrings) {
+stList *getContigPaths(Flower *flower, const char *eventString, stList *eventStrings) {
     stList *maximalHaplotypePaths = stList_construct3(0,
             (void(*)(void *)) stList_destruct);
     stSortedSet *segmentSet = stSortedSet_construct();
@@ -173,7 +173,7 @@ stList *getMaximalHaplotypePaths(Flower *flower, const char *eventString, stList
     return maximalHaplotypePaths;
 }
 
-stHash *buildSegmentToMaximalHaplotypePathHash(stList *maximalHaplotypePaths) {
+stHash *buildSegmentToContigPathHash(stList *maximalHaplotypePaths) {
     stHash *segmentToMaximalHaplotypePathHash = stHash_construct();
     for (int32_t i = 0; i < stList_length(maximalHaplotypePaths); i++) {
         stList *maximalHaplotypePath = stList_get(maximalHaplotypePaths, i);
@@ -191,7 +191,7 @@ stHash *buildSegmentToMaximalHaplotypePathHash(stList *maximalHaplotypePaths) {
     return segmentToMaximalHaplotypePathHash;
 }
 
-int32_t haplotypePathLength(stList *haplotypePath) {
+int32_t contigPathLength(stList *haplotypePath) {
     int32_t k = 0;
     for (int32_t j = 0; j < stList_length(haplotypePath); j++) {
         Segment *segment = stList_get(haplotypePath, j);
@@ -200,12 +200,12 @@ int32_t haplotypePathLength(stList *haplotypePath) {
     return k;
 }
 
-stHash *buildMaximalHaplotypeToMaximalHaplotypeLength(
+stHash *buildContigPathToContigPathLengthHash(
         stList *maximalHaplotypePaths) {
     stHash *maximalHaplotypesToMaximalHaplotypePathLengths = stHash_construct();
     for (int32_t i = 0; i < stList_length(maximalHaplotypePaths); i++) {
         stList *maximalHaplotypePath = stList_get(maximalHaplotypePaths, i);
-        int32_t k = haplotypePathLength(maximalHaplotypePath);
+        int32_t k = contigPathLength(maximalHaplotypePath);
         stHash_insert(maximalHaplotypesToMaximalHaplotypePathLengths,
                 maximalHaplotypePath, stIntTuple_construct(1, k));
     }

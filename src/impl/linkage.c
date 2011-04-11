@@ -23,15 +23,23 @@
 #include "cactusMafs.h"
 #include "assemblyStructures.h"
 
+static bool stringIsInList(const char *eventString, stList *eventStrings) {
+    for(int32_t i=0; i<stList_length(eventStrings); i++) {
+        const char *eventString2 = stList_get(eventStrings, i);
+        if(strcmp(eventString, eventString2) == 0) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
 static void getHaplotypeSequencesP(stSortedSet *metaSequences, Flower *flower, stList *eventStrings) {
     //Iterate over the sequences in the flower.
     Flower_SequenceIterator *seqIt = flower_getSequenceIterator(flower);
     Sequence *sequence;
     while ((sequence = flower_getNextSequence(seqIt)) != NULL) {
         MetaSequence *metaSequence = sequence_getMetaSequence(sequence);
-        if (strcmp(event_getHeader(sequence_getEvent(sequence)), "hapA1") == 0
-                || strcmp(event_getHeader(sequence_getEvent(sequence)), "hapA2")
-                        == 0) {
+        if (stringIsInList(event_getHeader(sequence_getEvent(sequence)), eventStrings) == 0) {
             if (stSortedSet_search(metaSequences, metaSequence) == NULL) {
                 stSortedSet_insert(metaSequences, metaSequence);
             }

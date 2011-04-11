@@ -11,27 +11,27 @@
 #include "cactus.h"
 #include "sonLib.h"
 
-
+/*
+ * Returns a list of maximal contig paths (each contig path is represented by a list of segments).
+ * The chosen event string is the identifier of the event for to get the contig paths.
+ * The event strings identify the events which are used to assess contiguity of the contig paths.
+ */
+stList *getContigPaths(Flower *flower, const char *chosenEventString, stList *eventStrings);
 
 /*
- * Returns a list of haplotype paths (each haplotype path is represented by a list of segments).
+ * Get a hash of segments to contig paths.
  */
-stList *getMaximalHaplotypePaths(Flower *flower, const char *eventString, stList *eventStrings);
+stHash *buildSegmentToContigPathHash(stList *contigPaths);
 
 /*
- * Get a hash of segments to maximal haplotypes paths.
+ * Returns the length of a given contig path in terms of the total number of bases in the segments it contains.
  */
-stHash *buildSegmentToMaximalHaplotypePathHash(stList *maximalHaplotypePaths);
+int32_t contigPathLength(stList *contigPath);
 
 /*
- * Returns the length of a given haplotype path.
+ * Gets a hash of contig paths to their lengths (represented as stIntTuples).
  */
-int32_t haplotypePathLength(stList *haplotypePath);
-
-/*
- * Gets a hash of maximal haplotype paths to there lengths (represented as stIntTuples).
- */
-stHash *buildMaximalHaplotypeToMaximalHaplotypeLength(
-        stList *maximalHaplotypePaths);
+stHash *buildContigPathToContigPathLengthHash(
+        stList *contigPaths);
 
 #endif /* MAXIMALHAPLOTYPEPATHS_H_ */
