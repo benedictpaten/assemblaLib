@@ -10,8 +10,8 @@
 #include "cactus.h"
 #include "sonLib.h"
 #include "haplotypePaths.h"
-#include "assemblyStructures.h"
-#include "complexAssemblyStructures.h"
+#include "adjacencyTraversal.h"
+#include "adjacencyClassification.h"
 
 static bool getCapGetAtEndOfPath(Cap *cap, Cap **pathEndCap, stList *segments) {
     Segment *segment = getAdjacentCapsSegment(cap);

@@ -1,6 +1,6 @@
 #include "sonLib.h"
 #include "cactus.h"
-#include "assemblyStructures.h"
+#include "adjacencyTraversal.h"
 #include "haplotypePaths.h"
 
 static void getMaximalHaplotypePathsP3(Segment *segment,

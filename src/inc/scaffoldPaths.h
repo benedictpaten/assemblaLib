@@ -10,6 +10,7 @@
 
 #include "cactus.h"
 #include "sonLib.h"
+#include "adjacencyClassification.h"
 
 /*
  * Returns the length of the scaffold paths.

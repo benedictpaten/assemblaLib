@@ -10,7 +10,7 @@
 
 #include "sonLib.h"
 #include "cactus.h"
-#include "assemblyStructures.h"
+#include "adjacencyTraversal.h"
 
 static bool stringIsInList(const char *eventString, stList *eventStrings) {
     for(int32_t i=0; i<stList_length(eventStrings); i++) {

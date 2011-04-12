@@ -7,7 +7,7 @@
 
 #include "sonLib.h"
 #include "cactus.h"
-#include "assemblyStructures.h"
+#include "adjacencyTraversal.h"
 
 Cap *getTerminalCap(Cap *cap) {
     Flower *nestedFlower = group_getNestedFlower(end_getGroup(cap_getEnd(cap)));

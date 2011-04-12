@@ -8,8 +8,8 @@
 #include "cactus.h"
 #include "sonLib.h"
 #include "haplotypePaths.h"
-#include "assemblyStructures.h"
-#include "complexAssemblyStructures.h"
+#include "adjacencyTraversal.h"
+#include "adjacencyClassification.h"
 
 static stHash *getMaximalScaffoldPathLengthsP(stList *haplotypePaths, stHash *haplotypePathToScaffoldPathHash,
         stList *eventStrings, CapCodeParameters *capCodeParameters) {
