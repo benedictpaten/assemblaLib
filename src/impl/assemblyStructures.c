@@ -5,9 +5,6 @@
  *      Author: benedictpaten
  */
 
-#include <getopt.h>
-#include <ctype.h>
-
 #include "sonLib.h"
 #include "cactus.h"
 #include "assemblyStructures.h"

@@ -51,7 +51,6 @@ enum CapCode {
      * Switches between haplotypes
      */
     HAP_SWITCH,
-    HOMO_TO_HETERO_SWITCH,
     HAP_NOTHING,
 
     /*

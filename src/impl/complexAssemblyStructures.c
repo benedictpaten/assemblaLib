@@ -93,11 +93,44 @@ void capCodeParameters_destruct(CapCodeParameters *capCodeParameters) {
     free(capCodeParameters);
 }
 
+static stSortedSet *getEventStrings(End *end, stList *eventStrings) {
+    stSortedSet *eventStringsSet = stSortedSet_construct3((int (*)(const void *, const void *))strcmp, NULL);
+    End_InstanceIterator *instanceIt = end_getInstanceIterator(end);
+    Cap *cap;
+    while((cap = end_getNext(instanceIt)) != NULL) {
+        stSortedSet_insert(eventStringsSet, (void *)event_getHeader(cap_getEvent(cap)));
+    }
+    end_destructInstanceIterator(instanceIt);
+    return eventStringsSet;
+}
+
+static enum CapCode getHaplotypeSwitchCode(Cap *cap, stList *eventStrings) {
+    Cap *adjacentCap = cap_getAdjacency(getTerminalCap(cap));
+    assert(adjacentCap != NULL);
+    End *end = cap_getEnd(cap);
+    End *adjacentEnd = cap_getEnd(adjacentCap);
+    stSortedSet *eventStringsForEnd1 = getEventStrings(end, eventStrings);
+    stSortedSet *eventStringsForEnd2 = getEventStrings(adjacentEnd, eventStrings);
+
+    assert(stSortedSet_size(eventStringsForEnd1) > 0);
+    assert(stSortedSet_size(eventStringsForEnd2) > 0);
+
+    stSortedSet *intersectionOfEventStrings = stSortedSet_getIntersection(eventStringsForEnd1, eventStringsForEnd2);
+
+    enum CapCode code1 = (stSortedSet_size(intersectionOfEventStrings) != stSortedSet_size(eventStringsForEnd1) || stSortedSet_size(intersectionOfEventStrings) != stSortedSet_size(eventStringsForEnd2)) ? HAP_SWITCH : HAP_NOTHING;
+
+    stSortedSet_destruct(eventStringsForEnd1);
+    stSortedSet_destruct(eventStringsForEnd2);
+    stSortedSet_destruct(intersectionOfEventStrings);
+
+    return code1;
+}
+
 enum CapCode getCapCode(Cap *cap, stList *eventStrings, int32_t *insertLength, int32_t *deleteLength,
         CapCodeParameters *capCodeParameters) {
     assert(hasCapInEvents(cap_getEnd(cap), eventStrings));
     if (trueAdjacency(cap, eventStrings)) {
-        return HAP_NOTHING;
+    	return getHaplotypeSwitchCode(cap, eventStrings);
     }
     *insertLength = 0;
     *deleteLength = 0;

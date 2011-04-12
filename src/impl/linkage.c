@@ -8,19 +8,8 @@
  *      Author: benedictpaten
  */
 
-#include <assert.h>
-#include <limits.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <time.h>
-#include <getopt.h>
-#include <ctype.h>
-#include <math.h>
-
 #include "sonLib.h"
 #include "cactus.h"
-#include "cactusMafs.h"
 #include "assemblyStructures.h"
 
 static bool stringIsInList(const char *eventString, stList *eventStrings) {
