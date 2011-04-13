@@ -1,5 +1,7 @@
 Installing assemblaLib.
 
+Tip: place all the downloaded projects in the same root directory, this way no makefile variables need be edited and the python path needs to be pointed at this base directory.
+
 (1) Download and install cactus.
 
 (2) Compile the C code:
