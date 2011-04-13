@@ -1,0 +1,9 @@
+Installing assemblaLib.
+
+(1) Download and install cactus.
+
+(2) Compile the C code:
+Modify the rootPath variable in the src/Makefile to point at where you installed cactus.
+In the base directory type 'make all' 
+
+See https://github.com/benedictpaten/ for different projects.
