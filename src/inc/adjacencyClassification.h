@@ -1,8 +1,7 @@
 /*
- * assemblyErrorStructures.h
+ * Copyright (C) 2009-2011 by Benedict Paten (benedictpaten (at) gmail.com) and Dent Earl (dearl (at) soe.ucsc.edu)
  *
- *  Created on: 18 Mar 2011
- *      Author: benedictpaten
+ * Released under the MIT license, see LICENSE.txt
  */
 
 #ifndef ASSEMBLYERRORSTRUCTURES_H_
