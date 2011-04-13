@@ -8,7 +8,7 @@
 
 #include "cactus.h"
 #include "sonLib.h"
-#include "haplotypePaths.h"
+#include "contigPaths.h"
 #include "adjacencyTraversal.h"
 #include "adjacencyClassification.h"
 

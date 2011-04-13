@@ -7,7 +7,7 @@
 #include "sonLib.h"
 #include "cactus.h"
 #include "adjacencyTraversal.h"
-#include "haplotypePaths.h"
+#include "contigPaths.h"
 
 static void getMaximalHaplotypePathsP3(Segment *segment,
         stList *maximalHaplotypePath, stSortedSet *segmentSet, stList *eventStrings) {
