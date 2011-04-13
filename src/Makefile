@@ -4,17 +4,17 @@ include ${rootPath}include.mk
 libSources = impl/*.c
 libHeaders = inc/*.h 
 
-all : ${libPath}/alignmentPathLib.a
+all : ${libPath}/assemblaLib.a
 
-${libPath}/alignmentPathLib.a : ${libSources} ${libHeaders} ${libPath}/cactusLib.a ${basicLibsDependencies}
+${libPath}/assemblaLib.a : ${libSources} ${libHeaders} ${libPath}/cactusLib.a ${basicLibsDependencies}
 	${cxx} ${cflags} -I inc -I ${libPath}/ -c ${libSources}
-	ar rc alignmentPathLib.a *.o
-	ranlib alignmentPathLib.a 
+	ar rc assemblaLib.a *.o
+	ranlib assemblaLib.a 
 	rm *.o
-	mv alignmentPathLib.a ${libPath}/
+	mv assemblaLib.a ${libPath}/
 	cp ${libHeaders} ${libPath}/
 
 clean : 
-	rm -f *.o ${libPath}/alignmentPathLib.a
+	rm -f *.o ${libPath}/assemblaLib.a
 
 	
