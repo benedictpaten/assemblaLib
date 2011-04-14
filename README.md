@@ -4,5 +4,5 @@ This is a library written by [Benedict Paten](https://github.com/benedictpaten/)
 
 ##Dependencies
 
-*[sonLib](https://github.com/benedictpaten/sonLib)
-*[cactus](https://github.com/benedictpaten/cactus)
+* [sonLib](https://github.com/benedictpaten/sonLib)
+* [cactus](https://github.com/benedictpaten/cactus)
