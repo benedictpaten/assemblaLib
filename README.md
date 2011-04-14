@@ -1,9 +1,6 @@
-This is a library written by Benedict Paten and Dent Earl for the Assemblathon assembly evaluation project. 
+#AssemblaLib
 
-This library depends on the sonLib and cactus libraries which can be found at:
+This is a library written by Benedict Paten and Dent Earl for the Assemblathon 1 assembly evaluation project. 
 
-https://github.com/benedictpaten/sonLib
+This library depends on the [sonLib][https://github.com/benedictpaten/sonLib] and [cactus][https://github.com/benedictpaten/cactus] libraries.
 
-and:
-
-https://github.com/benedictpaten/cactus
