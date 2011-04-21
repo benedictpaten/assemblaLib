@@ -49,12 +49,13 @@ static int32_t getBoundingNsP(Segment *segment) {
     char *string = segment_getString(segment);
     assert(string != NULL);
     int32_t k = 0;
-    for (int32_t j = 0; j < strlen(string); j++) {
-        if (string[j] == 'N' || string[j] == 'n') {
+    for (int32_t j = 0; j < strlen(string) && j < 5; j++) {
+        if (toupper(string[j]) == 'N') {
             k++;
-        } else {
-            break;
         }
+        //} else {
+        //    break;
+        //}
     }
     free(string);
     return k;
@@ -62,7 +63,7 @@ static int32_t getBoundingNsP(Segment *segment) {
 
 static int32_t getBoundingNs(Cap *cap) {
     assert(cap != NULL);
-    Segment *segment = getAdjacentCapsSegment(cap);
+    Segment *segment = getCapsSegment(cap);
     if (segment == NULL) {
         return 0;
     }
@@ -70,10 +71,10 @@ static int32_t getBoundingNs(Cap *cap) {
     Cap *_3TerminalCap = getTerminalCap(segment_get3Cap(segment));
     assert(_5TerminalCap != NULL);
     assert(_3TerminalCap != NULL);
-    if (cap_getName(cap_getAdjacency(_5TerminalCap)) == cap_getName(cap)) {
+    if (cap_getName(_5TerminalCap) == cap_getName(cap)) {
         return getBoundingNsP(segment);
     } else {
-        assert(cap_getName(cap_getAdjacency(_3TerminalCap)) == cap_getName(cap));
+        assert(cap_getName(_3TerminalCap) == cap_getName(cap));
         return getBoundingNsP(segment_getReverse(segment));
     }
 }

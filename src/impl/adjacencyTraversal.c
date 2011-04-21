@@ -18,7 +18,7 @@ Cap *getTerminalCap(Cap *cap) {
     return cap;
 }
 
-static Segment *getAdjacentCapsSegmentP(Cap *cap) {
+Segment *getCapsSegment(Cap *cap) {
     if (cap_getSegment(cap) != NULL) {
         return cap_getSegment(cap);
     }
@@ -32,7 +32,7 @@ static Segment *getAdjacentCapsSegmentP(Cap *cap) {
             if (!cap_getOrientation(cap)) {
                 parentCap = cap_getReverse(parentCap);
             }
-            return getAdjacentCapsSegmentP(parentCap);
+            return getCapsSegment(parentCap);
         } else { //Cap must be a free stub end.
             assert(0); //Not in the current alignments.
             assert(end_isFree(cap_getEnd(cap)));
@@ -45,7 +45,7 @@ Segment *getAdjacentCapsSegment(Cap *cap) {
     cap = getTerminalCap(cap);
     cap = cap_getAdjacency(cap);
     assert(cap != NULL);
-    return getAdjacentCapsSegmentP(cap);
+    return getCapsSegment(cap);
 }
 
 static bool capHasGivenEvents(Cap *cap, stList *eventStrings) {

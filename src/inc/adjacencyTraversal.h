@@ -40,6 +40,11 @@ Cap *getTerminalCap(Cap *cap);
 bool trueAdjacency(Cap *cap, stList *eventStrings);
 
 /*
+ * Returns the segment of the terminal cap.
+ */
+Segment *getCapsSegment(Cap *cap);
+
+/*
  * Returns the segment of the adjacent terminal cap.
  */
 Segment *getAdjacentCapsSegment(Cap *cap);
