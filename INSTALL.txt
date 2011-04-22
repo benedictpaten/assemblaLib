@@ -4,7 +4,9 @@ Tip: place all the downloaded projects in the same root directory, this way no m
 
 (1) Download and install cactus.
 
-(2) Compile the C code:
+(2) Download and install cactusTools.
+
+(3) Compile the C code:
 Modify the rootPath variable in the src/Makefile to point at where you installed cactus.
 In the base directory type 'make all' 
 
