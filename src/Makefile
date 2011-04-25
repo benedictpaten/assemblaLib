@@ -16,6 +16,6 @@ ${localLibPath}/assemblaLib.a : ${libSources} ${libHeaders} ${libPath}/cactusLib
 	cp ${libHeaders} ${localLibPath}/
 
 clean : 
-	rm -f *.o ${localLibPath}/assemblaLib.a
+	rm -f *.o ${localLibPath}/*
 
 	
