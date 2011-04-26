@@ -146,8 +146,7 @@ bool endsAreConnected(End *end1, End *end2, stList *eventStrings) {
                     assert(cap_getPositiveOrientation(cap1)
                             != cap_getPositiveOrientation(cap2));
                     assert(cap_getName(cap1) != cap_getName(cap2));
-                    assert(cap_getCoordinate(cap1) != cap_getCoordinate(
-                                    cap2));
+                    //they could have the same coordinate if they represent two ends of a block of length 1.
 
                     end_destructInstanceIterator(instanceIterator);
                     end_destructInstanceIterator(instanceIterator2);
