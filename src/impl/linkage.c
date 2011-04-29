@@ -42,7 +42,7 @@ static void getHaplotypeSequencesP(stSortedSet *metaSequences, Flower *flower, s
     flower_destructGroupIterator(groupIt);
 }
 
-stSortedSet *getHaplotypeSequences(Flower *flower, stList *eventStrings) {
+stSortedSet *getMetaSequencesForEvents(Flower *flower, stList *eventStrings) {
     /*
      * Gets the haplotype sequences in the set.
      */

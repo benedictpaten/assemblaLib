@@ -39,6 +39,6 @@ void samplePoints(Flower *flower, MetaSequence *metaSequence,
 /*
  * Gets all the meta sequences in the flower that are identified by the given set of event strings.
  */
-stSortedSet *getHaplotypeSequences(Flower *flower, stList *eventStrings);
+stSortedSet *getMetaSequencesForEvents(Flower *flower, stList *eventStrings);
 
 #endif /* LINKAGE_H_ */

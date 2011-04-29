@@ -8,6 +8,31 @@
 #include "cactus.h"
 #include "adjacencyTraversal.h"
 
+char *getTerminalAdjacencySubString(Cap *cap) {
+    cap = getTerminalCap(cap);
+    cap = cap_getStrand(cap) ? cap : cap_getReverse(cap); //This ensures the asserts are as expected.
+    Cap *adjacentCap = cap_getAdjacency(cap);
+    int32_t i = cap_getCoordinate(cap) - cap_getCoordinate(adjacentCap);
+    assert(i != 0);
+    if (i > 0) {
+        assert(cap_getSide(cap));
+        assert(!cap_getSide(adjacentCap));
+        return sequence_getString(cap_getSequence(cap),
+                cap_getCoordinate(adjacentCap) + 1, i - 1, 1);
+    } else {
+        assert(cap_getSide(adjacentCap));
+        assert(!cap_getSide(cap));
+        return sequence_getString(cap_getSequence(cap), cap_getCoordinate(cap) + 1, -i - 1, 1);
+    }
+}
+
+int32_t getTerminalAdjacencyLength(Cap *cap) {
+    char *cA = getTerminalAdjacencySubString(cap);
+    int32_t i = strlen(cA);
+    free(cA);
+    return i;
+}
+
 Cap *getTerminalCap(Cap *cap) {
     Flower *nestedFlower = group_getNestedFlower(end_getGroup(cap_getEnd(cap)));
     if (nestedFlower != NULL) {
@@ -59,7 +84,10 @@ static bool capHasGivenEvents(Cap *cap, stList *eventStrings) {
 }
 
 bool trueAdjacency(Cap *cap, stList *eventStrings) {
-    cap = getTerminalCap(cap);
+	if(getTerminalAdjacencyLength(cap) > 0) {
+        return 0;
+    }
+	cap = getTerminalCap(cap);
     assert(cap != NULL);
     Cap *otherCap = cap_getAdjacency(cap);
     assert(otherCap != NULL);

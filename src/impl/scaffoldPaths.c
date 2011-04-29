@@ -36,12 +36,12 @@ static stHash *getMaximalScaffoldPathLengthsP(stList *haplotypePaths, stHash *ha
             int32_t j = stIntTuple_getPosition(stHash_search(haplotypeToMaximalHaplotypeLengthHash, haplotypePath), 0);
             Segment *adjacentSegment = getAdjacentCapsSegment(segment_get5Cap(_5Segment));
             assert(adjacentSegment != NULL);
-            while (!hasCapInEvents(cap_getEnd(segment_get5Cap(adjacentSegment)), eventStrings)) { //isHaplotypeEnd(cap_getEnd(segment_get5Cap(adjacentSegment)))) {
+            while (!hasCapInEvents(cap_getEnd(segment_get5Cap(adjacentSegment)), eventStrings)) { //is not a haplotype end
                 adjacentSegment = getAdjacentCapsSegment(segment_get5Cap(adjacentSegment));
                 assert(adjacentSegment != NULL);
             }
             assert(adjacentSegment != NULL);
-            assert(hasCapInEvents(cap_getEnd(segment_get5Cap(adjacentSegment)), eventStrings)); //isHaplotypeEnd(cap_getEnd(segment_get5Cap(adjacentSegment))));
+            assert(hasCapInEvents(cap_getEnd(segment_get5Cap(adjacentSegment)), eventStrings)); //is a haplotype end
             stList *adjacentHaplotypePath = stHash_search(segmentToMaximalHaplotypePathHash, adjacentSegment);
             if (adjacentHaplotypePath == NULL) {
                 adjacentHaplotypePath = stHash_search(segmentToMaximalHaplotypePathHash, segment_getReverse(

@@ -14,6 +14,17 @@
  * Functions to get the 'code' of an adjacency.
  */
 
+
+/*
+ * Gets the length of a terminal adjacency.
+ */
+int32_t getTerminalAdjacencyLength(Cap *cap);
+
+/*
+ * Get the sequence associated with an a terminal adjacency.
+ */
+char *getTerminalAdjacencySubString(Cap *cap);
+
 /*
  * A wrapper structure to represent parameters to the getCapCode function.
  */
