@@ -111,6 +111,8 @@ static stSortedSet *getOrderedSegmentsForSequence(Flower *flower,
         assert(i == segment_getStart(segment));
         i += segment_getLength(segment);
     }
+    st_uglyf("We have %i %i %i %i\n", i, metaSequence_getStart(metaSequence), i - metaSequence_getStart(metaSequence), metaSequence_getLength(
+            metaSequence));
     assert(i - metaSequence_getStart(metaSequence) == metaSequence_getLength(
             metaSequence));
     stSortedSet_destructIterator(it);

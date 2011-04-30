@@ -14,7 +14,7 @@
 /*
  * Returns the length of the scaffold paths.
  */
-stHash *getMaximalScaffoldPathLengths(stList *contigPaths, stList *eventStrings, CapCodeParameters *capCodeParameters);
+stHash *getContigPathToScaffoldPathLengthsHash(stList *contigPaths, stList *eventStrings, CapCodeParameters *capCodeParameters);
 
 /*
  * Gets a set of scaffold paths, each being represented as a set of contig paths.
