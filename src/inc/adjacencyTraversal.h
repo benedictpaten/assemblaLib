@@ -15,6 +15,16 @@
  */
 
 /*
+ * Gets the length of a terminal adjacency.
+ */
+int32_t getTerminalAdjacencyLength(Cap *cap);
+
+/*
+ * Get the sequence associated with an a terminal adjacency.
+ */
+char *getTerminalAdjacencySubString(Cap *cap);
+
+/*
  * Returns non-zero iff the end contains a cap whose event is labelled with the given event string.
  */
 bool hasCapInEvent(End *end, const char *eventString);

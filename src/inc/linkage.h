@@ -41,4 +41,10 @@ void samplePoints(Flower *flower, MetaSequence *metaSequence,
  */
 stSortedSet *getMetaSequencesForEvents(Flower *flower, stList *eventStrings);
 
+/*
+ * Returns a sorted set of all the segments in the hierarchy that match the given meta sequence.
+ */
+stSortedSet *getOrderedSegmentsForSequence(Flower *flower,
+        MetaSequence *metaSequence);
+
 #endif /* LINKAGE_H_ */
