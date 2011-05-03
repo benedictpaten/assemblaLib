@@ -118,8 +118,13 @@ static stSortedSet *getEventStrings(End *end, stList *eventStrings) {
     End_InstanceIterator *instanceIt = end_getInstanceIterator(end);
     Cap *cap;
     while ((cap = end_getNext(instanceIt)) != NULL) {
-        stSortedSet_insert(eventStringsSet,
-                (void *) event_getHeader(cap_getEvent(cap)));
+        const char *header = event_getHeader(cap_getEvent(cap));
+        for(int32_t i=0; i<stList_length(eventStrings); i++) {
+            if(strcmp(stList_get(eventStrings, i), header) == 0) {
+                stSortedSet_insert(eventStringsSet,
+                                   (void *) event_getHeader(cap_getEvent(cap)));
+            }
+        }
     }
     end_destructInstanceIterator(instanceIt);
     return eventStringsSet;
@@ -131,8 +136,7 @@ static enum CapCode getHaplotypeSwitchCode(Cap *cap, stList *eventStrings) {
     End *end = cap_getEnd(cap);
     End *adjacentEnd = cap_getEnd(adjacentCap);
     stSortedSet *eventStringsForEnd1 = getEventStrings(end, eventStrings);
-    stSortedSet *eventStringsForEnd2 = getEventStrings(adjacentEnd,
-            eventStrings);
+    stSortedSet *eventStringsForEnd2 = getEventStrings(adjacentEnd, eventStrings);
 
     assert(stSortedSet_size(eventStringsForEnd1) > 0);
     assert(stSortedSet_size(eventStringsForEnd2) > 0);
