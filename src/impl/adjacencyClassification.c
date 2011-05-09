@@ -37,7 +37,7 @@ static int32_t getNumberOfNsInAdjacency(Cap *cap) {
 }
 
 static bool getCapGetAtEndOfPath(Cap *cap, Cap **pathEndCap,
-        int32_t *pathLength, int32_t *nCount) {
+        int32_t *pathLength, int32_t *nCount, stList *haplotypeEventStrings, stList *contaminationEventStrings) {
     //Account for length of adjacency
     *pathLength += getTerminalAdjacencyLength(cap);
     *nCount += getNumberOfNsInAdjacency(cap);
@@ -55,14 +55,14 @@ static bool getCapGetAtEndOfPath(Cap *cap, Cap **pathEndCap,
                     cap_getAdjacency(getTerminalCap(cap))));
 
     End *adjacentEnd = cap_getEnd(adjacentCap);
-    if (hasCapNotInEvent(adjacentEnd, event_getHeader(cap_getEvent(cap)))) { //isContaminationEnd(adjacentEnd) || isHaplotypeEnd(adjacentEnd)) {
+    if (hasCapInEvents(adjacentEnd, contaminationEventStrings) || hasCapInEvents(adjacentEnd, haplotypeEventStrings)) { //hasCapNotInEvent(adjacentEnd, event_getHeader(cap_getEvent(cap)))) { //isContaminationEnd(adjacentEnd) || isHaplotypeEnd(adjacentEnd)) {
         *pathEndCap = adjacentCap;
         return 1;
     }
     *pathLength += segment_getLength(segment);
     *nCount += getNumberOfNsInSegment(segment);
     return getCapGetAtEndOfPath(cap_getOtherSegmentCap(adjacentCap),
-            pathEndCap, pathLength, nCount);
+            pathEndCap, pathLength, nCount, haplotypeEventStrings, contaminationEventStrings);
 }
 
 static int32_t getBoundingNsP(Segment *segment) {
@@ -157,11 +157,11 @@ static enum CapCode getHaplotypeSwitchCode(Cap *cap, stList *eventStrings) {
     return code1;
 }
 
-enum CapCode getCapCode(Cap *cap, stList *eventStrings, int32_t *insertLength,
+enum CapCode getCapCode(Cap *cap, stList *haplotypeEventStrings, stList *contaminationEventStrings, int32_t *insertLength,
         int32_t *deleteLength, CapCodeParameters *capCodeParameters) {
-    assert(hasCapInEvents(cap_getEnd(cap), eventStrings));
-    if (trueAdjacency(cap, eventStrings)) {
-        return getHaplotypeSwitchCode(cap, eventStrings);
+    assert(hasCapInEvents(cap_getEnd(cap), haplotypeEventStrings));
+    if (trueAdjacency(cap, haplotypeEventStrings)) {
+        return getHaplotypeSwitchCode(cap, haplotypeEventStrings);
     }
     *insertLength = 0;
     *deleteLength = 0;
@@ -170,7 +170,7 @@ enum CapCode getCapCode(Cap *cap, stList *eventStrings, int32_t *insertLength,
     Cap *pathEndCap = NULL;
     int32_t pathLength = 0, nCount = 0;
     bool pathEndsOnStub = !getCapGetAtEndOfPath(cap, &pathEndCap, &pathLength,
-            &nCount);
+            &nCount, haplotypeEventStrings, contaminationEventStrings);
     assert(pathLength >= 0);
     assert(nCount >= 0);
     assert(pathEndCap != NULL);
@@ -178,19 +178,19 @@ enum CapCode getCapCode(Cap *cap, stList *eventStrings, int32_t *insertLength,
     nCount += getBoundingNs(cap) + getBoundingNs(pathEndCap);
 
     if (pathEndsOnStub) {
-        assert(!hasCapInEvents(otherPathEnd, eventStrings)); //isHaplotypeEnd(otherPathEnd) && !isContaminationEnd(otherPathEnd));
+        assert(!hasCapInEvents(otherPathEnd, haplotypeEventStrings)); //isHaplotypeEnd(otherPathEnd) && !isContaminationEnd(otherPathEnd));
         return pathLength == 0 ? CONTIG_END
         : (nCount >= 1 ? (nCount >= capCodeParameters->minimumNCount ? CONTIG_END_WITH_SCAFFOLD_GAP
                         : CONTIG_END_WITH_AMBIGUITY_GAP)
                 : ERROR_CONTIG_END_WITH_INSERT);
     }
 
-    if (hasCapInEvents(otherPathEnd, eventStrings)) {
-        if (endsAreConnected(end, otherPathEnd, eventStrings)) {
+    if (hasCapInEvents(otherPathEnd, haplotypeEventStrings)) {
+        if (endsAreConnected(end, otherPathEnd, haplotypeEventStrings)) {
             int32_t minimumHaplotypeDistanceBetweenEnds;
             //Establish if indel or order breaking rearrangement
             if (endsAreAdjacent(end, otherPathEnd,
-                            &minimumHaplotypeDistanceBetweenEnds, eventStrings)) {
+                            &minimumHaplotypeDistanceBetweenEnds, haplotypeEventStrings)) {
                 *insertLength = pathLength;
                 *deleteLength = minimumHaplotypeDistanceBetweenEnds;
                 if (nCount >= capCodeParameters->minimumNCount) { //Insertion was scaffold gap

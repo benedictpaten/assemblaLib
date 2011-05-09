@@ -81,8 +81,9 @@ enum CapCode {
 /*
  * Gets a code indicating the type of structure the cap's adjacency is part of.
  */
-enum CapCode getCapCode(Cap *cap, stList *eventStrings, int32_t *insertLength, int32_t *deleteLength,
+enum CapCode getCapCode(Cap *cap, stList *haplotypeEventStrings, stList *contaminationEventStrings, int32_t *insertLength, int32_t *deleteLength,
                         CapCodeParameters *capCodeParameters);
+
 
 
 #endif /* ASSEMBLYERRORSTRUCTURES_H_ */

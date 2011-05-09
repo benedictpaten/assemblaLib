@@ -11,7 +11,7 @@
 #include "adjacencyClassification.h"
 
 static stHash *getScaffoldPathsP(stList *haplotypePaths, stHash *haplotypePathToScaffoldPathHash,
-        stList *eventStrings, CapCodeParameters *capCodeParameters) {
+        stList *haplotypeEventStrings, stList *contaminationEventStrings, CapCodeParameters *capCodeParameters) {
     stHash *haplotypeToMaximalHaplotypeLengthHash = buildContigPathToContigPathLengthHash(haplotypePaths);
     stHash *segmentToMaximalHaplotypePathHash = buildSegmentToContigPathHash(haplotypePaths);
     for (int32_t i = 0; i < stList_length(haplotypePaths); i++) {
@@ -28,22 +28,22 @@ static stHash *getScaffoldPathsP(stList *haplotypePaths, stHash *haplotypePathTo
         }
         assert(segment_getStrand(_5Segment));
         if (getAdjacentCapsSegment(segment_get5Cap(_5Segment)) != NULL) {
-            assert(!trueAdjacency(segment_get5Cap(_5Segment), eventStrings));
+            assert(!trueAdjacency(segment_get5Cap(_5Segment), haplotypeEventStrings));
         }
         int32_t insertLength;
         int32_t deleteLength;
-        enum CapCode _5CapCode = getCapCode(segment_get5Cap(_5Segment), eventStrings, &insertLength, &deleteLength, capCodeParameters);
+        enum CapCode _5CapCode = getCapCode(segment_get5Cap(_5Segment), haplotypeEventStrings, contaminationEventStrings, &insertLength, &deleteLength, capCodeParameters);
         if (_5CapCode == SCAFFOLD_GAP || _5CapCode == AMBIGUITY_GAP) {
             assert(stHash_search(haplotypeToMaximalHaplotypeLengthHash, haplotypePath) != NULL);
             int32_t j = stIntTuple_getPosition(stHash_search(haplotypeToMaximalHaplotypeLengthHash, haplotypePath), 0);
             Segment *adjacentSegment = getAdjacentCapsSegment(segment_get5Cap(_5Segment));
             assert(adjacentSegment != NULL);
-            while (!hasCapInEvents(cap_getEnd(segment_get5Cap(adjacentSegment)), eventStrings)) { //is not a haplotype end
+            while (!hasCapInEvents(cap_getEnd(segment_get5Cap(adjacentSegment)), haplotypeEventStrings)) { //is not a haplotype end
                 adjacentSegment = getAdjacentCapsSegment(segment_get5Cap(adjacentSegment));
                 assert(adjacentSegment != NULL);
             }
             assert(adjacentSegment != NULL);
-            assert(hasCapInEvents(cap_getEnd(segment_get5Cap(adjacentSegment)), eventStrings)); //is a haplotype end
+            assert(hasCapInEvents(cap_getEnd(segment_get5Cap(adjacentSegment)), haplotypeEventStrings)); //is a haplotype end
             stList *adjacentHaplotypePath = stHash_search(segmentToMaximalHaplotypePathHash, adjacentSegment);
             if (adjacentHaplotypePath == NULL) {
                 adjacentHaplotypePath = stHash_search(segmentToMaximalHaplotypePathHash, segment_getReverse(
@@ -86,19 +86,19 @@ static stHash *getScaffoldPathsP(stList *haplotypePaths, stHash *haplotypePathTo
 
 static void debugScaffoldPathsP(Cap *cap, stList *haplotypePath,
         stHash *haplotypePathToScaffoldPathHash, stHash *haplotypeToMaximalHaplotypeLengthHash,
-        stHash *segmentToMaximalHaplotypePathHash, stList *eventStrings, CapCodeParameters *capCodeParameters, bool capDir) {
+        stHash *segmentToMaximalHaplotypePathHash, stList *haplotypeEventStrings, stList *contaminationEventStrings, CapCodeParameters *capCodeParameters, bool capDir) {
     int32_t insertLength;
     int32_t deleteLength;
-    enum CapCode capCode = getCapCode(cap, eventStrings, &insertLength, &deleteLength, capCodeParameters);
+    enum CapCode capCode = getCapCode(cap, haplotypeEventStrings, contaminationEventStrings, &insertLength, &deleteLength, capCodeParameters);
     if (capCode == SCAFFOLD_GAP || capCode == AMBIGUITY_GAP) {
         Segment *adjacentSegment = getAdjacentCapsSegment(cap);
         assert(adjacentSegment != NULL);
-        while (!hasCapInEvents(cap_getEnd(capDir ? segment_get5Cap(adjacentSegment) : segment_get3Cap(adjacentSegment)), eventStrings)) {
+        while (!hasCapInEvents(cap_getEnd(capDir ? segment_get5Cap(adjacentSegment) : segment_get3Cap(adjacentSegment)), haplotypeEventStrings)) {
             adjacentSegment = getAdjacentCapsSegment(capDir ? segment_get5Cap(adjacentSegment) : segment_get3Cap(adjacentSegment));
             assert(adjacentSegment != NULL);
         }
         assert(adjacentSegment != NULL);
-        assert(hasCapInEvents(cap_getEnd(segment_get5Cap(adjacentSegment)), eventStrings)); //isHaplotypeEnd(cap_getEnd(segment_get5Cap(adjacentSegment))));
+        assert(hasCapInEvents(cap_getEnd(segment_get5Cap(adjacentSegment)), haplotypeEventStrings)); //isHaplotypeEnd(cap_getEnd(segment_get5Cap(adjacentSegment))));
         stIntTuple *j = stHash_search(haplotypeToMaximalHaplotypeLengthHash, haplotypePath);
         assert(j != NULL);
         stList *adjacentHaplotypePath = stHash_search(segmentToMaximalHaplotypePathHash, adjacentSegment);
@@ -117,7 +117,7 @@ static void debugScaffoldPathsP(Cap *cap, stList *haplotypePath,
 }
 
 static void debugScaffoldPaths(stList *haplotypePaths, stHash *haplotypePathToScaffoldPathHash,
-        stHash *haplotypeToMaximalHaplotypeLengthHash, stList *eventStrings, CapCodeParameters *capCodeParameters) {
+        stHash *haplotypeToMaximalHaplotypeLengthHash, stList *haplotypeEventStrings, stList *contaminationEventStrings, CapCodeParameters *capCodeParameters) {
     stHash *segmentToMaximalHaplotypePathHash = buildSegmentToContigPathHash(haplotypePaths);
     for (int32_t i = 0; i < stList_length(haplotypePaths); i++) {
         stList *haplotypePath = stList_get(haplotypePaths, i);
@@ -136,33 +136,33 @@ static void debugScaffoldPaths(stList *haplotypePaths, stHash *haplotypePathToSc
         Cap *_5Cap = segment_get5Cap(_5Segment);
         Cap *_3Cap = segment_get3Cap(_3Segment);
         if (getAdjacentCapsSegment(_5Cap) != NULL) {
-            assert(!trueAdjacency(_5Cap, eventStrings));
+            assert(!trueAdjacency(_5Cap, haplotypeEventStrings));
         }
         if (getAdjacentCapsSegment(_3Cap) != NULL) {
-            assert(!trueAdjacency(_3Cap, eventStrings));
+            assert(!trueAdjacency(_3Cap, haplotypeEventStrings));
         }
         debugScaffoldPathsP(_5Cap, haplotypePath,
                 haplotypePathToScaffoldPathHash, haplotypeToMaximalHaplotypeLengthHash,
-                segmentToMaximalHaplotypePathHash, eventStrings, capCodeParameters, 1);
+                segmentToMaximalHaplotypePathHash, haplotypeEventStrings, contaminationEventStrings, capCodeParameters, 1);
         debugScaffoldPathsP(_3Cap, haplotypePath,
                 haplotypePathToScaffoldPathHash, haplotypeToMaximalHaplotypeLengthHash,
-                segmentToMaximalHaplotypePathHash, eventStrings, capCodeParameters, 0);
+                segmentToMaximalHaplotypePathHash, haplotypeEventStrings, contaminationEventStrings, capCodeParameters, 0);
     }
     stHash_destruct(segmentToMaximalHaplotypePathHash);
 }
 
-stHash *getContigPathToScaffoldPathLengthsHash(stList *haplotypePaths, stList *eventStrings, CapCodeParameters *capCodeParameters) {
+stHash *getContigPathToScaffoldPathLengthsHash(stList *haplotypePaths, stList *haplotyoeEventStrings, stList *contaminationEventStrings, CapCodeParameters *capCodeParameters) {
     stHash *haplotypePathToScaffoldPathHash = stHash_construct();
-    stHash *i = getScaffoldPathsP(haplotypePaths, haplotypePathToScaffoldPathHash, eventStrings, capCodeParameters);
-    debugScaffoldPaths(haplotypePaths, haplotypePathToScaffoldPathHash, i, eventStrings, capCodeParameters);
+    stHash *i = getScaffoldPathsP(haplotypePaths, haplotypePathToScaffoldPathHash, haplotyoeEventStrings, contaminationEventStrings, capCodeParameters);
+    debugScaffoldPaths(haplotypePaths, haplotypePathToScaffoldPathHash, i, haplotyoeEventStrings, contaminationEventStrings, capCodeParameters);
     stHash_destruct(haplotypePathToScaffoldPathHash);
     return i;
 }
 
-stHash *getScaffoldPaths(stList *haplotypePaths, stList *eventStrings, CapCodeParameters *capCodeParameters) {
+stHash *getScaffoldPaths(stList *haplotypePaths, stList *haplotypeEventStrings, stList *contaminationEventStrings, CapCodeParameters *capCodeParameters) {
     stHash *haplotypePathToScaffoldPathHash = stHash_construct();
-    stHash *i = getScaffoldPathsP(haplotypePaths, haplotypePathToScaffoldPathHash, eventStrings, capCodeParameters);
-    debugScaffoldPaths(haplotypePaths, haplotypePathToScaffoldPathHash, i, eventStrings, capCodeParameters);
+    stHash *i = getScaffoldPathsP(haplotypePaths, haplotypePathToScaffoldPathHash, haplotypeEventStrings, contaminationEventStrings, capCodeParameters);
+    debugScaffoldPaths(haplotypePaths, haplotypePathToScaffoldPathHash, i, haplotypeEventStrings, contaminationEventStrings, capCodeParameters);
     stHash_destruct(i);
     return haplotypePathToScaffoldPathHash;
 }

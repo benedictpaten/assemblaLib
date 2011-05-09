@@ -14,11 +14,11 @@
 /*
  * Returns the length of the scaffold paths.
  */
-stHash *getContigPathToScaffoldPathLengthsHash(stList *contigPaths, stList *eventStrings, CapCodeParameters *capCodeParameters);
+stHash *getContigPathToScaffoldPathLengthsHash(stList *contigPaths, stList *haplotypeEventStrings, stList *contaminationEventStrings, CapCodeParameters *capCodeParameters);
 
 /*
  * Gets a set of scaffold paths, each being represented as a set of contig paths.
  */
-stHash *getScaffoldPaths(stList *contigPaths, stList *eventStrings, CapCodeParameters *capCodeParameters);
+stHash *getScaffoldPaths(stList *contigPaths, stList *haplotypeEventStrings, stList *contaminationEventStrings, CapCodeParameters *capCodeParameters);
 
 #endif /* SCAFFOLD_PATHS_H_ */
