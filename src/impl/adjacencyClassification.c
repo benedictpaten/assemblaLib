@@ -178,7 +178,7 @@ enum CapCode getCapCode(Cap *cap, stList *haplotypeEventStrings, stList *contami
     nCount += getBoundingNs(cap) + getBoundingNs(pathEndCap);
 
     if (pathEndsOnStub) {
-        assert(!hasCapInEvents(otherPathEnd, haplotypeEventStrings)); //isHaplotypeEnd(otherPathEnd) && !isContaminationEnd(otherPathEnd));
+        //assert(!hasCapInEvents(otherPathEnd, haplotypeEventStrings)); //isHaplotypeEnd(otherPathEnd) && !isContaminationEnd(otherPathEnd));
         return pathLength == 0 ? CONTIG_END
         : (nCount >= 1 ? (nCount >= capCodeParameters->minimumNCount ? CONTIG_END_WITH_SCAFFOLD_GAP
                         : CONTIG_END_WITH_AMBIGUITY_GAP)
