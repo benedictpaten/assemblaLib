@@ -12,7 +12,10 @@ double bitsScoreFn(char guess, char answer) {
     guess = toupper(guess);
     answer = toupper(answer);
     double f = 0.415037499278844; //-log_2(3/4)
-    assert(answer == 'A' || answer == 'C' || answer == 'G' || answer == 'T');
+    assert(answer == 'A' || answer == 'C' || answer == 'G' || answer == 'T' || answer == 'N');
+    if(answer == 'N') {
+        return 0;
+    }
     switch (guess) {
         case 'A':
         case 'C':
@@ -48,5 +51,5 @@ double bitsScoreFn(char guess, char answer) {
 }
 
 bool correctFn(char guess, char answer) {
-    return (bitsScoreFn(guess, answer) != 0) || toupper(guess) == 'N';
+    return (bitsScoreFn(guess, answer) != 0) || toupper(guess) == 'N' || toupper(answer) == 'N';
 }
