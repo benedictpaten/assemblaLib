@@ -54,6 +54,7 @@ Segment *getCapsSegment(Cap *cap) {
     if (parentGroup != NULL) {
         Cap *parentCap = flower_getCap(group_getFlower(parentGroup), cap_getName(cap));
         if (parentCap != NULL) {
+            assert(cap_getOrientation(parentCap));
             if (!cap_getOrientation(cap)) {
                 parentCap = cap_getReverse(parentCap);
             }

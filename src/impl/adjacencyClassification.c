@@ -73,9 +73,6 @@ static int32_t getBoundingNsP(Segment *segment) {
         if (toupper(string[j]) == 'N') {
             k++;
         }
-        //} else {
-        //    break;
-        //}
     }
     free(string);
     return k;
@@ -91,6 +88,7 @@ static int32_t getBoundingNs(Cap *cap) {
     Cap *_3TerminalCap = getTerminalCap(segment_get3Cap(segment));
     assert(_5TerminalCap != NULL);
     assert(_3TerminalCap != NULL);
+    //return 0;
     if (cap_getName(_5TerminalCap) == cap_getName(cap)) {
         return getBoundingNsP(segment);
     } else {
@@ -122,7 +120,7 @@ static stSortedSet *getEventStrings(End *end, stList *eventStrings) {
         for(int32_t i=0; i<stList_length(eventStrings); i++) {
             if(strcmp(stList_get(eventStrings, i), header) == 0) {
                 stSortedSet_insert(eventStringsSet,
-                                   (void *) event_getHeader(cap_getEvent(cap)));
+                                   (void *) header);
             }
         }
     }
