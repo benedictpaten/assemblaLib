@@ -11,6 +11,11 @@
 #include "sonLib.h"
 
 /*
+ * Gets the segments in increasing order of the sequence.
+ */
+stSortedSet *getOrderedSegments(Flower *flower);
+
+/*
  * Picks a two points along the sequence.
  * Size of gap between the two points is picked
  * with probability log_10(x - y)/log_10(w),
@@ -34,17 +39,11 @@ bool linked(Segment *segmentX, Segment *segmentY, int32_t difference, const char
 void samplePoints(Flower *flower, MetaSequence *metaSequence,
         const char *eventString,
         int32_t sampleNumber, int32_t *correct, int32_t *samples,
-        int32_t bucketNumber, double bucketSize);
+        int32_t bucketNumber, double bucketSize, stSortedSet *sortedSegments);
 
 /*
  * Gets all the meta sequences in the flower that are identified by the given set of event strings.
  */
 stSortedSet *getMetaSequencesForEvents(Flower *flower, stList *eventStrings);
-
-/*
- * Returns a sorted set of all the segments in the hierarchy that match the given meta sequence.
- */
-stSortedSet *getOrderedSegmentsForSequence(Flower *flower,
-        MetaSequence *metaSequence);
 
 #endif /* LINKAGE_H_ */

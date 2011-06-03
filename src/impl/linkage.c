@@ -54,19 +54,16 @@ stSortedSet *getMetaSequencesForEvents(Flower *flower, stList *eventStrings) {
     return metaSequences;
 }
 
-static void getOrderedSegmentsForSequenceP(Flower *flower,
-        MetaSequence *metaSequence, stSortedSet *segments) {
+static void getOrderedSegmentsP(Flower *flower,
+        stSortedSet *segments) {
     Flower_SegmentIterator *segmentIt = flower_getSegmentIterator(flower);
     Segment *segment;
     while ((segment = flower_getNextSegment(segmentIt)) != NULL) {
-        if (sequence_getMetaSequence(segment_getSequence(segment))
-                == metaSequence) {
             if (!segment_getStrand(segment)) {
                 segment = segment_getReverse(segment);
             }
             assert(stSortedSet_search(segments, segment) == NULL);
             stSortedSet_insert(segments, segment);
-        }
     }
     flower_destructSegmentIterator(segmentIt);
     //Recurse over the flowers
@@ -74,62 +71,60 @@ static void getOrderedSegmentsForSequenceP(Flower *flower,
     Group *group;
     while ((group = flower_getNextGroup(groupIt)) != NULL) {
         if (group_getNestedFlower(group) != NULL) {
-            getOrderedSegmentsForSequenceP(group_getNestedFlower(group),
-                    metaSequence, segments);
+            getOrderedSegmentsP(group_getNestedFlower(group),
+                    segments);
         }
     }
     flower_destructGroupIterator(groupIt);
 }
 
 static int32_t segmentCompareFn_coordinate;
+static Name segmentCompareFn_metaSequence;
 static int segmentCompareFn(const void *segment1, const void *segment2) {
-    int32_t
-            x =
-                    segment1 == &segmentCompareFn_coordinate ? segmentCompareFn_coordinate
-                            : (int64_t) segment_getStart((void *) segment1);
-    int32_t
-            y =
-                    segment2 == &segmentCompareFn_coordinate ? segmentCompareFn_coordinate
-                            : (int64_t) segment_getStart((void *) segment2);
-    assert(
-            segment1 == &segmentCompareFn_coordinate || segment_getStrand(
-                    (void *) segment1));
-    assert(
-            segment2 == &segmentCompareFn_coordinate || segment_getStrand(
-                    (void *) segment2));
-    int64_t i = ((int64_t) x) - y;
-    return i > 0 ? 1 : i < 0 ? -1 : 0; //This was because of an overflow
+    Name name1 = segment1 == &segmentCompareFn_coordinate ? segmentCompareFn_metaSequence : metaSequence_getName(sequence_getMetaSequence(segment_getSequence((Segment *)segment1)));
+
+    Name name2 = segment2 == &segmentCompareFn_coordinate ? segmentCompareFn_metaSequence : metaSequence_getName(sequence_getMetaSequence(segment_getSequence((Segment *)segment2)));
+    int i = cactusMisc_nameCompare(name1, name2);
+    if(i == 0) {
+        int64_t
+                x =
+                        segment1 == &segmentCompareFn_coordinate ? segmentCompareFn_coordinate
+                                : (int64_t) segment_getStart((void *) segment1);
+        int64_t
+                y =
+                        segment2 == &segmentCompareFn_coordinate ? segmentCompareFn_coordinate
+                                : (int64_t) segment_getStart((void *) segment2);
+        assert(
+                segment1 == &segmentCompareFn_coordinate || segment_getStrand(
+                        (void *) segment1));
+        assert(
+                segment2 == &segmentCompareFn_coordinate || segment_getStrand(
+                        (void *) segment2));
+        return x > y ? 1 : (x < y ? -1 : 0); //i > 0 ? 1 : i < 0 ? -1 : 0; //This was because of an overflow
+    }
+    return i;
 }
 
-stSortedSet *getOrderedSegmentsForSequence(Flower *flower,
-        MetaSequence *metaSequence) {
-    /*
-     * Gets the segments in increasing order of the sequence.
-     */
+stSortedSet *getOrderedSegments(Flower *flower) {
     stSortedSet *segments = stSortedSet_construct3(segmentCompareFn, NULL);
-    getOrderedSegmentsForSequenceP(flower, metaSequence, segments);
-    //Debug check
-    stSortedSetIterator *it = stSortedSet_getIterator(segments);
-    Segment *segment;
-    int32_t i = metaSequence_getStart(metaSequence);
-    while ((segment = stSortedSet_getNext(it)) != NULL) {
-        i += getTerminalAdjacencyLength(segment_get5Cap(segment));
-        assert(i == segment_getStart(segment));
-        i += segment_getLength(segment);
-    }
-    stSortedSet_destructIterator(it);
+    getOrderedSegmentsP(flower, segments);
     return segments;
 }
 
-static Segment *getSegment(stSortedSet *sortedSegments, int32_t x) {
+static Segment *getSegment(stSortedSet *sortedSegments, int32_t x, MetaSequence *metaSequence) {
     segmentCompareFn_coordinate = x;
+    segmentCompareFn_metaSequence = metaSequence_getName(metaSequence);
     Segment *segment = stSortedSet_searchLessThanOrEqual(sortedSegments,
             &segmentCompareFn_coordinate);
     assert((void *) segment != &segmentCompareFn_coordinate);
+
+
     if (segment != NULL) {
-        assert(segment_getStart(segment) <= x);
-        if (x < segment_getStart(segment) + segment_getLength(segment)) {
-            return segment;
+        if(sequence_getMetaSequence(segment_getSequence(segment)) == metaSequence) {
+            assert(segment_getStart(segment) <= x);
+            if (x < segment_getStart(segment) + segment_getLength(segment)) {
+                return segment;
+            }
         }
     }
     return NULL;
@@ -203,9 +198,7 @@ bool linked(Segment *segmentX, Segment *segmentY, int32_t difference,
 
 void samplePoints(Flower *flower, MetaSequence *metaSequence,
         const char *eventString, int32_t sampleNumber, int32_t *correct,
-        int32_t *samples, int32_t bucketNumber, double bucketSize) {
-    stSortedSet *sortedSegments = getOrderedSegmentsForSequence(flower,
-            metaSequence);
+        int32_t *samples, int32_t bucketNumber, double bucketSize, stSortedSet *sortedSegments) {
     assert(metaSequence_getLength(metaSequence) > 1);
     for (int32_t i = 0; i < sampleNumber; i++) {
         int32_t x, y;
@@ -217,15 +210,14 @@ void samplePoints(Flower *flower, MetaSequence *metaSequence,
         assert(bucket < bucketNumber);
         assert(bucket >= 0);
         samples[bucket]++;
-        Segment *segmentX = getSegment(sortedSegments, x);
+        Segment *segmentX = getSegment(sortedSegments, x, metaSequence);
         if (segmentX != NULL) {
-            Segment *segmentY = getSegment(sortedSegments, y);
+            Segment *segmentY = getSegment(sortedSegments, y, metaSequence);
             if (segmentY != NULL && linked(segmentX, segmentY, diff,
                     eventString)) {
                 correct[bucket]++;
             }
         }
     }
-    stSortedSet_destruct(sortedSegments);
 }
 
