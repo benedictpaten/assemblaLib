@@ -199,6 +199,9 @@ bool linked(Segment *segmentX, Segment *segmentY, int32_t difference,
 void samplePoints(Flower *flower, MetaSequence *metaSequence,
         const char *eventString, int32_t sampleNumber, int32_t *correct,
         int32_t *samples, int32_t bucketNumber, double bucketSize, stSortedSet *sortedSegments) {
+    if(metaSequence_getLength(metaSequence) == 0) {
+        return;
+    }
     assert(metaSequence_getLength(metaSequence) > 1);
     for (int32_t i = 0; i < sampleNumber; i++) {
         int32_t x, y;
