@@ -33,12 +33,13 @@ bool linked(Segment *segmentX, Segment *segmentY, int32_t difference, const char
 /*
  * Samples sampleNumber pairs of positions separated by distance from 1 to bucketNumber*bucketSize.
  * int32_t *correct and *samples are arrays which must be of at least bucketNumber length, and are used
- * to accumulate sample events and record the number of correct pairs. Samples are picked using
+ * to accumulate sample events and record the number of correct pairs. The aligned array
+ * records samples which are aligned, but not neccesarily correctly linked. Samples are picked using
  * pickAPairOfPoints().
  */
 void samplePoints(Flower *flower, MetaSequence *metaSequence,
         const char *eventString,
-        int32_t sampleNumber, int32_t *correct, int32_t *samples,
+        int32_t sampleNumber, int32_t *correct, int32_t *aligned, int32_t *samples,
         int32_t bucketNumber, double bucketSize, stSortedSet *sortedSegments);
 
 /*

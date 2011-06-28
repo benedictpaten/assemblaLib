@@ -197,7 +197,7 @@ bool linked(Segment *segmentX, Segment *segmentY, int32_t difference,
 }
 
 void samplePoints(Flower *flower, MetaSequence *metaSequence,
-        const char *eventString, int32_t sampleNumber, int32_t *correct,
+        const char *eventString, int32_t sampleNumber, int32_t *correct, int32_t *aligned,
         int32_t *samples, int32_t bucketNumber, double bucketSize, stSortedSet *sortedSegments) {
     if(metaSequence_getLength(metaSequence) == 0) {
         return;
@@ -216,9 +216,11 @@ void samplePoints(Flower *flower, MetaSequence *metaSequence,
         Segment *segmentX = getSegment(sortedSegments, x, metaSequence);
         if (segmentX != NULL) {
             Segment *segmentY = getSegment(sortedSegments, y, metaSequence);
-            if (segmentY != NULL && linked(segmentX, segmentY, diff,
-                    eventString)) {
-                correct[bucket]++;
+            if (segmentY != NULL) {
+                aligned[bucket]++;
+                if(linked(segmentX, segmentY, diff, eventString)) {
+                    correct[bucket]++;
+                }
             }
         }
     }
