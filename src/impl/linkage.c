@@ -149,9 +149,10 @@ void pickAPairOfPoints(MetaSequence *metaSequence, int32_t *x, int32_t *y) {
 }
 
 bool linked(Segment *segmentX, Segment *segmentY, int32_t difference,
-        const char *eventString) {
+        const char *eventString, bool *aligned) {
     assert(segment_getStrand(segmentX));
     assert(segment_getStrand(segmentY));
+    *aligned = 0;
     if (segment_getStart(segmentX) < segment_getStart(segmentY)) {
         Block *blockX = segment_getBlock(segmentX);
         Block *blockY = segment_getBlock(segmentY);
@@ -166,6 +167,7 @@ bool linked(Segment *segmentX, Segment *segmentY, int32_t difference,
                 while ((segmentY2 = block_getNext(instanceItY)) != NULL) {
                     if (strcmp(event_getHeader(segment_getEvent(segmentY2)),
                             eventString) == 0) {
+                        *aligned = 1;
                         if (sequence_getMetaSequence(
                                 segment_getSequence(segmentX2))
                                 == sequence_getMetaSequence(
@@ -190,8 +192,11 @@ bool linked(Segment *segmentX, Segment *segmentY, int32_t difference,
         block_destructInstanceIterator(instanceItX);
     } else {
         assert(segmentX == segmentY);
-        return hasCapInEvent(block_get5End(segment_getBlock(segmentX)),
-                eventString); //isAssemblyEnd(block_get5End(segment_getBlock(segmentX)));
+        if(hasCapInEvent(block_get5End(segment_getBlock(segmentX)),
+                eventString)) {
+            *aligned = 1;
+            return 1;
+        }
     }
     return 0;
 }
@@ -216,9 +221,12 @@ void samplePoints(Flower *flower, MetaSequence *metaSequence,
         if (segmentX != NULL) {
             Segment *segmentY = getSegment(sortedSegments, y, metaSequence);
             if (segmentY != NULL) {
-                aligned[bucket]++;
-                if(linked(segmentX, segmentY, diff, eventString)) {
+                bool b;
+                if(linked(segmentX, segmentY, diff, eventString, &b)) {
                     correct[bucket]++;
+                }
+                if(b) {
+                    aligned[bucket]++;
                 }
             }
         }
