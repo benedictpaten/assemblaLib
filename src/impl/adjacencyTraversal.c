@@ -105,8 +105,10 @@ bool trueAdjacency(Cap *cap, stList *eventStrings) {
             assert(event_getHeader(cap_getEvent(cap2)) == event_getHeader(
                             cap_getEvent(otherCap2)));
             if (capHasGivenEvents(cap2, eventStrings)) { //strcmp(eventName, "hapA1") == 0 || strcmp(eventName, "hapA2") == 0) {
-                end_destructInstanceIterator(endInstanceIt);
-                return 1;
+                if(getTerminalAdjacencyLength(cap2) == 0) {
+                    end_destructInstanceIterator(endInstanceIt);
+                    return 1;
+                }
             }
         }
     }
