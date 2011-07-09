@@ -15,11 +15,11 @@
 
 typedef struct _sequenceInterval {
         int32_t start;
-        int32_t length;
+        int32_t end;
         char *sequenceName;
 } SequenceInterval;
 
-SequenceInterval *sequenceInterval_construct(int32_t start, int32_t length,
+SequenceInterval *sequenceInterval_construct(int32_t start, int32_t end,
         const char *sequenceName);
 
 void sequenceInterval_destruct(SequenceInterval *sequenceInterval);

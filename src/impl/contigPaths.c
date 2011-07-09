@@ -103,7 +103,7 @@ static void getMaximalHaplotypePathsCheck(Flower *flower,
     Flower_SegmentIterator *segmentIt = flower_getSegmentIterator(flower);
     Segment *segment;
     while ((segment = flower_getNextSegment(segmentIt)) != NULL) {
-        if (strcmp(event_getHeader(segment_getEvent(segment)), "assembly") == 0) {
+        if (strcmp(event_getHeader(segment_getEvent(segment)), eventString) == 0) {
             if (hasCapInEvents(cap_getEnd(segment_get5Cap(segment)), eventStrings)) { //isHaplotypeEnd(cap_getEnd(segment_get5Cap(segment)))) {
                 assert(stSortedSet_search(segmentSet, segment) != NULL
                         || stSortedSet_search(segmentSet, segment_getReverse(

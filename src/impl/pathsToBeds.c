@@ -14,13 +14,13 @@
 #include "scaffoldPaths.h"
 #include "pathsToBeds.h"
 
-SequenceInterval *sequenceInterval_construct(int32_t start, int32_t length,
+SequenceInterval *sequenceInterval_construct(int32_t start, int32_t end,
         const char *sequenceName) {
     SequenceInterval *sequenceInterval = st_malloc(sizeof(SequenceInterval));
-    assert(length >= 0);
+    assert(end >= start);
     assert(start >= 0);
     sequenceInterval->start = start;
-    sequenceInterval->length = length;
+    sequenceInterval->end = end;
     assert(sequenceName != NULL);
     sequenceInterval->sequenceName = stString_copy(sequenceName);
     return sequenceInterval;
@@ -39,20 +39,26 @@ stList *getContigPathIntervalsP(stList *contigPaths) {
         stList *contigPath = stList_get(contigPaths, i);
         Segment *_5Segment = stList_get(contigPath, 0);
         Segment *_3Segment = stList_get(contigPath, stList_length(contigPath)-1);
+        assert(segment_getStrand(_5Segment) == segment_getStrand(_3Segment));
+        if (!segment_getStrand(_5Segment)) {
+            Segment *j = _5Segment;
+            _5Segment = segment_getReverse(_3Segment);
+            _3Segment = segment_getReverse(j);
+        }
         Sequence *sequence = segment_getSequence(_5Segment);
 
         assert(sequence != NULL);
-        assert(segment_getSequence(_5Segment) == segment_getSequence(_3Segment));
+        assert(sequence_getMetaSequence(segment_getSequence(_5Segment)) == sequence_getMetaSequence(segment_getSequence(_3Segment)));
         assert(segment_getStrand(_5Segment));
         assert(segment_getStrand(_3Segment));
         assert(segment_getStart(_5Segment) < segment_getStart(_3Segment) + segment_getLength(_3Segment));
 
-        SequenceInterval *sequenceInterval = sequenceInterval_construct(segment_getStart(_5Segment),
-                segment_getStart(_3Segment) + segment_getLength(_3Segment),
+        SequenceInterval *sequenceInterval = sequenceInterval_construct(segment_getStart(_5Segment) -  sequence_getStart(sequence),
+                segment_getStart(_3Segment) + segment_getLength(_3Segment) - sequence_getStart(sequence),
                 sequence_getHeader(sequence));
         stList_append(intervals, sequenceInterval);
         st_logDebug("Built a path interval %s %i %i\n", sequenceInterval->sequenceName,
-                sequenceInterval->start, sequenceInterval->length);
+                sequenceInterval->start, sequenceInterval->end);
     }
     return intervals;
 }
@@ -89,7 +95,7 @@ stList *getScaffoldPathIntervals(Flower *flower, const char *chosenEventString, 
         SequenceInterval *_5SequenceInterval = stList_get(scaffoldPathIntervals, 0);
         SequenceInterval *_3SequenceInterval = stList_get(scaffoldPathIntervals, stList_length(scaffoldPathIntervals)-1);
         stList_append(intervals, sequenceInterval_construct(_5SequenceInterval->start, _3SequenceInterval->start +
-                _3SequenceInterval->length, _5SequenceInterval->sequenceName));
+                _3SequenceInterval->end, _5SequenceInterval->sequenceName));
         stList_destruct(scaffoldPathList);
     }
     stList_destruct(contigPaths);
