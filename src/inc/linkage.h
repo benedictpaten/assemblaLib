@@ -40,7 +40,7 @@ bool linked(Segment *segmentX, Segment *segmentY, int32_t difference, const char
 void samplePoints(Flower *flower, MetaSequence *metaSequence,
         const char *eventString,
         int32_t sampleNumber, int32_t *correct, int32_t *aligned, int32_t *samples,
-        int32_t bucketNumber, double bucketSize, stSortedSet *sortedSegments);
+        int32_t bucketNumber, double bucketSize, stSortedSet *sortedSegments,  bool duplication);
 
 /*
  * Gets all the meta sequences in the flower that are identified by the given set of event strings.
