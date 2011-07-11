@@ -204,13 +204,15 @@ bool linked(Segment *segmentX, Segment *segmentY, int32_t difference,
 static bool duplicated(Segment *segment) {
     Sequence *sequence = segment_getSequence(segment);
     assert(sequence != NULL);
+    MetaSequence *metaSequence = sequence_getMetaSequence(sequence);
     Block *block = segment_getBlock(segment);
     Block_InstanceIterator *it = block_getInstanceIterator(block);
     Segment *segment2;
     while((segment2 = block_getNext(it)) != NULL) {
        if(segment != segment2) {
            assert(segment != segment_getReverse(segment2));
-           if(segment_getSequence(segment2) == sequence) {
+           Sequence *sequence2 = segment_getSequence(segment2);
+           if(sequence2 != NULL && sequence_getMetaSequence(sequence2) == metaSequence) {
                block_destructInstanceIterator(it);
                return 1;
            }
@@ -238,9 +240,9 @@ void samplePoints(Flower *flower, MetaSequence *metaSequence,
         assert(bucket >= 0);
         samples[bucket]++;
         Segment *segmentX = getSegment(sortedSegments, x, metaSequence);
-        if (segmentX != NULL  && (duplication || duplicated(segmentX))) {
+        if (segmentX != NULL  && (duplication || !duplicated(segmentX))) {
             Segment *segmentY = getSegment(sortedSegments, y, metaSequence);
-            if (segmentY != NULL && (duplication || duplicated(segmentX))) {
+            if (segmentY != NULL && (duplication || !duplicated(segmentX))) {
                 bool b;
                 if(linked(segmentX, segmentY, diff, eventString, &b)) {
                     correct[bucket]++;
