@@ -24,8 +24,11 @@ SequenceInterval *sequenceInterval_construct(int32_t start, int32_t end,
 
 void sequenceInterval_destruct(SequenceInterval *sequenceInterval);
 
-stList *getContigPathIntervals(Flower *flower, const char *chosenEventString, stList *referenceEventStrings);
+stList *getContigPathIntervals(Flower *flower, stList *contigPaths, const char *chosenEventString, stList *referenceEventStrings);
 
 stList *getScaffoldPathIntervals(Flower *flower, const char *chosenEventString, stList *referenceEventStrings, stList *contaminationEventStrings, CapCodeParameters *capCodeParameters);
+
+stList *getSplitContigPathIntervals(Flower *flower, stList *contigPaths, const char *chosenEventString,
+        stList *eventStrings);
 
 #endif
