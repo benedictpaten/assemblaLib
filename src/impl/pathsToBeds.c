@@ -159,8 +159,10 @@ stList *getSplitContigPathIntervals(Flower *flower, stList *contigPaths,
     for (int32_t i = 0; i < stList_length(contigPaths); i++) {
         stList *contigPath = stList_get(contigPaths, i);
         stSortedSet *seen = stSortedSet_construct3((int (*)(const void *, const void *))segmentAndPosition_cmpFn, free);
+        assert(getSplitContigPathIntervalsP(stList_get(contigPath, 0),contigPath, seen, 0) == stList_length(contigPath)-1);
         for (int32_t j = 0; j < stList_length(contigPath); j++) {
             Segment *_5Segment = stList_get(contigPath, j);
+            assert(isInSet(seen, _5Segment, j));
             Block_InstanceIterator *it = block_getInstanceIterator(
                     segment_getBlock(_5Segment));
             Segment *segment2;
