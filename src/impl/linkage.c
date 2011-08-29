@@ -130,9 +130,11 @@ static Segment *getSegment(stSortedSet *sortedSegments, int32_t x, MetaSequence 
     return NULL;
 }
 
-void pickAPairOfPoints(MetaSequence *metaSequence, int32_t *x, int32_t *y) {
+void pickAPairOfPointsP(MetaSequence *metaSequence, int32_t *x, int32_t *y, double proportionOfSequence) {
     assert(metaSequence_getLength(metaSequence) > 20);
-    double interval = log10(metaSequence_getLength(metaSequence) - 10);
+    assert(proportionOfSequence > 0);
+    assert(proportionOfSequence <= 1.0);
+    double interval = log10(metaSequence_getLength(metaSequence) * proportionOfSequence - 10);
     double j = RANDOM();
     double i = interval * j;
     int32_t size = (int32_t) pow(10.0, i) + 1;
@@ -146,6 +148,10 @@ void pickAPairOfPoints(MetaSequence *metaSequence, int32_t *x, int32_t *y) {
     assert(
             *y - metaSequence_getStart(metaSequence) < metaSequence_getLength(
                     metaSequence));
+}
+
+void pickAPairOfPoints(MetaSequence *metaSequence, int32_t *x, int32_t *y) {
+    pickAPairOfPointsP(metaSequence, x, y, 1.0);
 }
 
 bool linked(Segment *segmentX, Segment *segmentY, int32_t difference,
@@ -225,13 +231,13 @@ static bool duplicated(Segment *segment) {
 void samplePoints(Flower *flower, MetaSequence *metaSequence,
         const char *eventString, int32_t sampleNumber, int32_t *correct, int32_t *aligned,
         int32_t *samples, int32_t bucketNumber, double bucketSize, stSortedSet *sortedSegments,
-        bool duplication) {
+        bool duplication, double proportionOfSequence) {
     if(metaSequence_getLength(metaSequence) <= 1) {
         return;
     }
     for (int32_t i = 0; i < sampleNumber; i++) {
         int32_t x, y;
-        pickAPairOfPoints(metaSequence, &x, &y);
+        pickAPairOfPointsP(metaSequence, &x, &y, proportionOfSequence);
         int64_t diff = y - x;
         assert(diff >= 1);
         int32_t bucket = log10(diff) * bucketSize;
