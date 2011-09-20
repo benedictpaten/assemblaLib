@@ -36,7 +36,7 @@ static int32_t getNumberOfNsInAdjacency(Cap *cap) {
     return i;
 }
 
-static bool getCapGetAtEndOfPath(Cap *cap, Cap **pathEndCap,
+bool getCapGetAtEndOfPath(Cap *cap, Cap **pathEndCap,
         int32_t *pathLength, int32_t *nCount, stList *haplotypeEventStrings, stList *contaminationEventStrings) {
     //Account for length of adjacency
     *pathLength += getTerminalAdjacencyLength(cap);
@@ -155,7 +155,7 @@ static enum CapCode getHaplotypeSwitchCode(Cap *cap, stList *eventStrings) {
     return code1;
 }
 
-enum CapCode getCapCode(Cap *cap, stList *haplotypeEventStrings, stList *contaminationEventStrings, int32_t *insertLength,
+enum CapCode getCapCode(Cap *cap, Cap **otherCap, stList *haplotypeEventStrings, stList *contaminationEventStrings, int32_t *insertLength,
         int32_t *deleteLength, CapCodeParameters *capCodeParameters) {
     assert(hasCapInEvents(cap_getEnd(cap), haplotypeEventStrings));
     if (trueAdjacency(cap, haplotypeEventStrings)) {
@@ -169,6 +169,7 @@ enum CapCode getCapCode(Cap *cap, stList *haplotypeEventStrings, stList *contami
     int32_t pathLength = 0, nCount = 0;
     bool pathEndsOnStub = !getCapGetAtEndOfPath(cap, &pathEndCap, &pathLength,
             &nCount, haplotypeEventStrings, contaminationEventStrings);
+    *otherCap = pathEndCap;
     assert(pathLength >= 0);
     assert(nCount >= 0);
     assert(pathEndCap != NULL);

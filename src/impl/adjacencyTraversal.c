@@ -226,9 +226,11 @@ bool capsAreAdjacent(Cap *cap1, Cap *cap2, int32_t *separationDistance) {
     return 0;
 }
 
-bool endsAreAdjacent(End *end1, End *end2, int32_t *minimumDistanceBetweenHaplotypeCaps, stList *eventStrings) {
+bool endsAreAdjacent2(End *end1, End *end2, Cap **returnCap1, Cap **returnCap2, int32_t *minimumDistanceBetweenHaplotypeCaps, stList *eventStrings) {
     End_InstanceIterator *instanceIterator = end_getInstanceIterator(end1);
     Cap *cap1;
+    *returnCap1 = NULL;
+    *returnCap2 = NULL;
     *minimumDistanceBetweenHaplotypeCaps = INT32_MAX;
     bool areAdjacent = 0;
     while ((cap1 = end_getNext(instanceIterator)) != NULL) {
@@ -241,6 +243,8 @@ bool endsAreAdjacent(End *end1, End *end2, int32_t *minimumDistanceBetweenHaplot
                     areAdjacent = 1;
                     if (i < *minimumDistanceBetweenHaplotypeCaps) {
                         *minimumDistanceBetweenHaplotypeCaps = i;
+                        *returnCap1 = cap1;
+                        *returnCap2 = cap2;
                     }
                 }
             }
@@ -249,4 +253,9 @@ bool endsAreAdjacent(End *end1, End *end2, int32_t *minimumDistanceBetweenHaplot
     }
     end_destructInstanceIterator(instanceIterator);
     return areAdjacent;
+}
+
+bool endsAreAdjacent(End *end1, End *end2, int32_t *minimumDistanceBetweenHaplotypeCaps, stList *eventStrings) {
+    Cap *cap1 = NULL, *cap2 = NULL;
+    return endsAreAdjacent2(end1, end2, &cap1, &cap2, minimumDistanceBetweenHaplotypeCaps, eventStrings);
 }

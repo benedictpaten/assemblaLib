@@ -78,4 +78,9 @@ bool endsAreAdjacent(End *end1, End *end2,
         int32_t *minimumDistanceBetweenCaps,
         stList *eventStrings);
 
+/*
+ * As endsAreAdjacent, but initialises cap1 and cap2 with the discovered caps.
+ */
+bool endsAreAdjacent2(End *end1, End *end2, Cap **cap1, Cap **cap2, int32_t *minimumDistanceBetweenHaplotypeCaps, stList *eventStrings);
+
 #endif /* ASSEMBLY_STRUCTURES_H_ */
