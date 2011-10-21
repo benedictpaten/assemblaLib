@@ -8,7 +8,12 @@
 #include "cactus.h"
 #include "adjacencyTraversal.h"
 
+bool getTerminalAdjacencyLength_ignoreAdjacencies = 0;
+
 char *getTerminalAdjacencySubString(Cap *cap) {
+    if(getTerminalAdjacencyLength_ignoreAdjacencies) {
+        return stString_copy("");
+    }
     cap = getTerminalCap(cap);
     cap = cap_getStrand(cap) ? cap : cap_getReverse(cap); //This ensures the asserts are as expected.
     Cap *adjacentCap = cap_getAdjacency(cap);
@@ -27,6 +32,9 @@ char *getTerminalAdjacencySubString(Cap *cap) {
 }
 
 int32_t getTerminalAdjacencyLength(Cap *cap) {
+    if(getTerminalAdjacencyLength_ignoreAdjacencies) {
+        return 0;
+    }
     char *cA = getTerminalAdjacencySubString(cap);
     int32_t i = strlen(cA);
     free(cA);

@@ -15,6 +15,11 @@
  */
 
 /*
+ * This flag causes the scripts to ignore terminal adjacencies.
+ */
+extern bool getTerminalAdjacencyLength_ignoreAdjacencies;
+
+/*
  * Gets the length of a terminal adjacency.
  */
 int32_t getTerminalAdjacencyLength(Cap *cap);
