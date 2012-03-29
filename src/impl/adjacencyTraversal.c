@@ -200,7 +200,7 @@ bool endsAreConnected(End *end1, End *end2, stList *eventStrings) {
 }
 
 bool capsAreAdjacent(Cap *cap1, Cap *cap2, int32_t *separationDistance) {
-    if (cap_getName(cap2) != cap_getName(cap1)) { //This can happen if end1 == end2
+    if (cap_getName(cap2) != cap_getName(cap1) && cap_getCoordinate(cap1) != cap_getCoordinate(cap2)) { //This can happen if end1 == end2
         if (sequence_getMetaSequence(cap_getSequence(cap1)) == sequence_getMetaSequence(cap_getSequence(cap2))) {
             assert(strcmp(event_getHeader(cap_getEvent(cap1)), event_getHeader(
                                     cap_getEvent(cap2))) == 0);
