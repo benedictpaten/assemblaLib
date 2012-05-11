@@ -86,6 +86,7 @@ static int32_t getBoundingNs(Cap *cap) {
     }
     Cap *_5TerminalCap = getTerminalCap(segment_get5Cap(segment));
     Cap *_3TerminalCap = getTerminalCap(segment_get3Cap(segment));
+    (void)_3TerminalCap;
     assert(_5TerminalCap != NULL);
     assert(_3TerminalCap != NULL);
     //return 0;

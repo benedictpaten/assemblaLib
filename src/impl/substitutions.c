@@ -45,8 +45,8 @@ double bitsScoreFn(char guess, char answer) {
         case 'N':
             return 0;
         default:
-            st_uglyf("I have %c %c\n", guess, answer);
-            assert(0);
+            st_errAbort("I have %c %c\n", guess, answer);
+            return 0;
     }
 }
 

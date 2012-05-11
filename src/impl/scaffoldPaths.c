@@ -102,6 +102,7 @@ static void debugScaffoldPathsP(Cap *cap, stList *haplotypePath,
         assert(adjacentSegment != NULL);
         assert(hasCapInEvents(cap_getEnd(segment_get5Cap(adjacentSegment)), haplotypeEventStrings)); //isHaplotypeEnd(cap_getEnd(segment_get5Cap(adjacentSegment))));
         stIntTuple *j = stHash_search(haplotypeToMaximalHaplotypeLengthHash, haplotypePath);
+        (void)j;
         assert(j != NULL);
         stList *adjacentHaplotypePath = stHash_search(segmentToMaximalHaplotypePathHash, adjacentSegment);
         if (adjacentHaplotypePath == NULL) {
@@ -111,6 +112,7 @@ static void debugScaffoldPathsP(Cap *cap, stList *haplotypePath,
         assert(adjacentHaplotypePath != NULL);
         assert(adjacentHaplotypePath != haplotypePath);
         stIntTuple *k = stHash_search(haplotypeToMaximalHaplotypeLengthHash, adjacentHaplotypePath);
+        (void)k;
         assert(k != NULL);
         assert(stIntTuple_getPosition(j, 0) == stIntTuple_getPosition(k, 0));
         assert(stHash_search(haplotypePathToScaffoldPathHash, haplotypePath) ==
