@@ -12,7 +12,7 @@ double bitsScoreFn(char guess, char answer) {
     guess = toupper(guess);
     answer = toupper(answer);
     double f = 0.415037499278844; //-log_2(3/4)
-    assert(answer == 'A' || answer == 'C' || answer == 'G' || answer == 'T' || answer == 'N');
+    //assert(answer == 'A' || answer == 'C' || answer == 'G' || answer == 'T' || answer == 'N');
     if(answer == 'N') {
         return 0;
     }
