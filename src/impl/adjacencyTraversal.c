@@ -239,7 +239,7 @@ bool endsAreAdjacent2(End *end1, End *end2, Cap **returnCap1, Cap **returnCap2, 
     Cap *cap1;
     *returnCap1 = NULL;
     *returnCap2 = NULL;
-    *minimumDistanceBetweenHaplotypeCaps = INT32_MAX;
+    *minimumDistanceBetweenHaplotypeCaps = INT64_MAX;
     bool areAdjacent = 0;
     while ((cap1 = end_getNext(instanceIterator)) != NULL) {
         if (capHasGivenEvents(cap1, eventStrings)) {
