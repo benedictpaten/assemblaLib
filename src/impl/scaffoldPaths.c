@@ -14,12 +14,12 @@ static stHash *getScaffoldPathsP(stList *haplotypePaths, stHash *haplotypePathTo
         stList *haplotypeEventStrings, stList *contaminationEventStrings, CapCodeParameters *capCodeParameters) {
     stHash *haplotypeToMaximalHaplotypeLengthHash = buildContigPathToContigPathLengthHash(haplotypePaths);
     stHash *segmentToMaximalHaplotypePathHash = buildSegmentToContigPathHash(haplotypePaths);
-    for (int32_t i = 0; i < stList_length(haplotypePaths); i++) {
+    for (int64_t i = 0; i < stList_length(haplotypePaths); i++) {
         stSortedSet *bucket = stSortedSet_construct();
         stHash_insert(haplotypePathToScaffoldPathHash, stList_get(haplotypePaths, i), bucket);
         stSortedSet_insert(bucket, stList_get(haplotypePaths, i));
     }
-    for (int32_t i = 0; i < stList_length(haplotypePaths); i++) {
+    for (int64_t i = 0; i < stList_length(haplotypePaths); i++) {
         stList *haplotypePath = stList_get(haplotypePaths, i);
         assert(stList_length(haplotypePath) > 0);
         Segment *_5Segment = stList_get(haplotypePath, 0);
@@ -30,13 +30,13 @@ static stHash *getScaffoldPathsP(stList *haplotypePaths, stHash *haplotypePathTo
         if (getAdjacentCapsSegment(segment_get5Cap(_5Segment)) != NULL) {
             assert(!trueAdjacency(segment_get5Cap(_5Segment), haplotypeEventStrings));
         }
-        int32_t insertLength;
-        int32_t deleteLength;
+        int64_t insertLength;
+        int64_t deleteLength;
         Cap *otherCap;
         enum CapCode _5CapCode = getCapCode(segment_get5Cap(_5Segment), &otherCap, haplotypeEventStrings, contaminationEventStrings, &insertLength, &deleteLength, capCodeParameters);
         if (_5CapCode == SCAFFOLD_GAP || _5CapCode == AMBIGUITY_GAP) {
             assert(stHash_search(haplotypeToMaximalHaplotypeLengthHash, haplotypePath) != NULL);
-            int32_t j = stIntTuple_getPosition(stHash_search(haplotypeToMaximalHaplotypeLengthHash, haplotypePath), 0);
+            int64_t j = stIntTuple_getPosition(stHash_search(haplotypeToMaximalHaplotypeLengthHash, haplotypePath), 0);
             Segment *adjacentSegment = getAdjacentCapsSegment(segment_get5Cap(_5Segment));
             assert(adjacentSegment != NULL);
             while (!hasCapInEvents(cap_getEnd(segment_get5Cap(adjacentSegment)), haplotypeEventStrings)) { //is not a haplotype end
@@ -53,7 +53,7 @@ static stHash *getScaffoldPathsP(stList *haplotypePaths, stHash *haplotypePathTo
             assert(adjacentHaplotypePath != NULL);
             assert(adjacentHaplotypePath != haplotypePath);
             assert(stHash_search(haplotypeToMaximalHaplotypeLengthHash, adjacentHaplotypePath) != NULL);
-            int32_t k = stIntTuple_getPosition(stHash_search(haplotypeToMaximalHaplotypeLengthHash, adjacentHaplotypePath), 0);
+            int64_t k = stIntTuple_getPosition(stHash_search(haplotypeToMaximalHaplotypeLengthHash, adjacentHaplotypePath), 0);
 
             //Now merge the buckets and make new int tuples..
             stSortedSet *bucket1 = stHash_search(haplotypePathToScaffoldPathHash, haplotypePath);
@@ -73,7 +73,7 @@ static stHash *getScaffoldPathsP(stList *haplotypePaths, stHash *haplotypePathTo
                 stIntTuple *m = stHash_remove(haplotypeToMaximalHaplotypeLengthHash, l);
                 assert(m != NULL);
                 assert(stIntTuple_getPosition(m, 0) == j || stIntTuple_getPosition(m, 0) == k);
-                stHash_insert(haplotypeToMaximalHaplotypeLengthHash, l, stIntTuple_construct(1, j + k));
+                stHash_insert(haplotypeToMaximalHaplotypeLengthHash, l, stIntTuple_construct1( j + k));
                 stIntTuple_destruct(m);
             }
             assert(stHash_search(haplotypePathToScaffoldPathHash, haplotypePath) == bucket3);
@@ -88,8 +88,8 @@ static stHash *getScaffoldPathsP(stList *haplotypePaths, stHash *haplotypePathTo
 static void debugScaffoldPathsP(Cap *cap, stList *haplotypePath,
         stHash *haplotypePathToScaffoldPathHash, stHash *haplotypeToMaximalHaplotypeLengthHash,
         stHash *segmentToMaximalHaplotypePathHash, stList *haplotypeEventStrings, stList *contaminationEventStrings, CapCodeParameters *capCodeParameters, bool capDir) {
-    int32_t insertLength;
-    int32_t deleteLength;
+    int64_t insertLength;
+    int64_t deleteLength;
     Cap *otherCap;
     enum CapCode capCode = getCapCode(cap, &otherCap, haplotypeEventStrings, contaminationEventStrings, &insertLength, &deleteLength, capCodeParameters);
     if (capCode == SCAFFOLD_GAP || capCode == AMBIGUITY_GAP) {
@@ -123,7 +123,7 @@ static void debugScaffoldPathsP(Cap *cap, stList *haplotypePath,
 static void debugScaffoldPaths(stList *haplotypePaths, stHash *haplotypePathToScaffoldPathHash,
         stHash *haplotypeToMaximalHaplotypeLengthHash, stList *haplotypeEventStrings, stList *contaminationEventStrings, CapCodeParameters *capCodeParameters) {
     stHash *segmentToMaximalHaplotypePathHash = buildSegmentToContigPathHash(haplotypePaths);
-    for (int32_t i = 0; i < stList_length(haplotypePaths); i++) {
+    for (int64_t i = 0; i < stList_length(haplotypePaths); i++) {
         stList *haplotypePath = stList_get(haplotypePaths, i);
         assert(stList_length(haplotypePath) > 0);
         //Traversing from 5' end..

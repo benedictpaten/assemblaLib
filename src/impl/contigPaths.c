@@ -131,12 +131,12 @@ stList *getContigPaths(Flower *flower, const char *eventString, stList *eventStr
     getMaximalHaplotypePathsP(flower, maximalHaplotypePaths, segmentSet, eventString, eventStrings);
 
     //Do some debug checks..
-    st_logDebug("We have %i maximal haplotype paths\n", stList_length(
+    st_logDebug("We have %" PRIi64 " maximal haplotype paths\n", stList_length(
             maximalHaplotypePaths));
     getMaximalHaplotypePathsCheck(flower, segmentSet, eventString, eventStrings);
-    for (int32_t i = 0; i < stList_length(maximalHaplotypePaths); i++) {
+    for (int64_t i = 0; i < stList_length(maximalHaplotypePaths); i++) {
         stList *maximalHaplotypePath = stList_get(maximalHaplotypePaths, i);
-        st_logDebug("We have a maximal haplotype path with length %i\n",
+        st_logDebug("We have a maximal haplotype path with length %" PRIi64 "\n",
                 stList_length(maximalHaplotypePath));
         assert(stList_length(maximalHaplotypePath) > 0);
         Segment *_5Segment = stList_get(maximalHaplotypePath, 0);
@@ -148,7 +148,7 @@ stList *getContigPaths(Flower *flower, const char *eventString, stList *eventStr
         if (getAdjacentCapsSegment(segment_get3Cap(_3Segment)) != NULL) {
             assert(!trueAdjacency(segment_get3Cap(_3Segment), eventStrings));
         }
-        for (int32_t j = 0; j < stList_length(maximalHaplotypePath) - 1; j++) {
+        for (int64_t j = 0; j < stList_length(maximalHaplotypePath) - 1; j++) {
             _5Segment = stList_get(maximalHaplotypePath, j);
             _3Segment = stList_get(maximalHaplotypePath, j + 1);
             assert(trueAdjacency(segment_get3Cap(_5Segment), eventStrings));
@@ -171,10 +171,10 @@ stList *getContigPaths(Flower *flower, const char *eventString, stList *eventStr
 
 stHash *buildSegmentToContigPathHash(stList *maximalHaplotypePaths) {
     stHash *segmentToMaximalHaplotypePathHash = stHash_construct();
-    for (int32_t i = 0; i < stList_length(maximalHaplotypePaths); i++) {
+    for (int64_t i = 0; i < stList_length(maximalHaplotypePaths); i++) {
         stList *maximalHaplotypePath = stList_get(maximalHaplotypePaths, i);
         assert(stList_length(maximalHaplotypePath) > 0);
-        for (int32_t j = 0; j < stList_length(maximalHaplotypePath); j++) {
+        for (int64_t j = 0; j < stList_length(maximalHaplotypePath); j++) {
             Segment *segment = stList_get(maximalHaplotypePath, j);
             assert(stHash_search(segmentToMaximalHaplotypePathHash, segment)
                     == NULL);
@@ -187,9 +187,9 @@ stHash *buildSegmentToContigPathHash(stList *maximalHaplotypePaths) {
     return segmentToMaximalHaplotypePathHash;
 }
 
-int32_t contigPathLength(stList *haplotypePath) {
-    int32_t k = 0;
-    for (int32_t j = 0; j < stList_length(haplotypePath); j++) {
+int64_t contigPathLength(stList *haplotypePath) {
+    int64_t k = 0;
+    for (int64_t j = 0; j < stList_length(haplotypePath); j++) {
         Segment *segment = stList_get(haplotypePath, j);
         k += segment_getLength(segment);
     }
@@ -199,11 +199,11 @@ int32_t contigPathLength(stList *haplotypePath) {
 stHash *buildContigPathToContigPathLengthHash(
         stList *maximalHaplotypePaths) {
     stHash *maximalHaplotypesToMaximalHaplotypePathLengths = stHash_construct();
-    for (int32_t i = 0; i < stList_length(maximalHaplotypePaths); i++) {
+    for (int64_t i = 0; i < stList_length(maximalHaplotypePaths); i++) {
         stList *maximalHaplotypePath = stList_get(maximalHaplotypePaths, i);
-        int32_t k = contigPathLength(maximalHaplotypePath);
+        int64_t k = contigPathLength(maximalHaplotypePath);
         stHash_insert(maximalHaplotypesToMaximalHaplotypePathLengths,
-                maximalHaplotypePath, stIntTuple_construct(1, k));
+                maximalHaplotypePath, stIntTuple_construct1( k));
     }
     return maximalHaplotypesToMaximalHaplotypePathLengths;
 }

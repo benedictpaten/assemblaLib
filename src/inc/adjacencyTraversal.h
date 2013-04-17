@@ -22,7 +22,7 @@ extern bool getTerminalAdjacencyLength_ignoreAdjacencies;
 /*
  * Gets the length of a terminal adjacency.
  */
-int32_t getTerminalAdjacencyLength(Cap *cap);
+int64_t getTerminalAdjacencyLength(Cap *cap);
 
 /*
  * Get the sequence associated with an a terminal adjacency.
@@ -68,7 +68,7 @@ Segment *getAdjacentCapsSegment(Cap *cap);
  * Returns non-zero iff the caps are adjacent, initialising separation distance with the distance
  * between them.
  */
-bool capsAreAdjacent(Cap *cap1, Cap *cap2, int32_t *separationDistance);
+bool capsAreAdjacent(Cap *cap1, Cap *cap2, int64_t *separationDistance);
 
 /*
  * Returns non-zero iff the ends are connected by sequences with the given events.
@@ -80,12 +80,12 @@ bool endsAreConnected(End *end1, End *end2, stList *eventStrings);
  * are minimumDistanceBetweenCaps is initialised to the minimum distance.
  */
 bool endsAreAdjacent(End *end1, End *end2,
-        int32_t *minimumDistanceBetweenCaps,
+        int64_t *minimumDistanceBetweenCaps,
         stList *eventStrings);
 
 /*
  * As endsAreAdjacent, but initialises cap1 and cap2 with the discovered caps.
  */
-bool endsAreAdjacent2(End *end1, End *end2, Cap **cap1, Cap **cap2, int32_t *minimumDistanceBetweenHaplotypeCaps, stList *eventStrings);
+bool endsAreAdjacent2(End *end1, End *end2, Cap **cap1, Cap **cap2, int64_t *minimumDistanceBetweenHaplotypeCaps, stList *eventStrings);
 
 #endif /* ASSEMBLY_STRUCTURES_H_ */

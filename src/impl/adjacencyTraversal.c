@@ -17,7 +17,7 @@ char *getTerminalAdjacencySubString(Cap *cap) {
     cap = getTerminalCap(cap);
     cap = cap_getStrand(cap) ? cap : cap_getReverse(cap); //This ensures the asserts are as expected.
     Cap *adjacentCap = cap_getAdjacency(cap);
-    int32_t i = cap_getCoordinate(cap) - cap_getCoordinate(adjacentCap);
+    int64_t i = cap_getCoordinate(cap) - cap_getCoordinate(adjacentCap);
     assert(i != 0);
     if (i > 0) {
         assert(cap_getSide(cap));
@@ -31,12 +31,12 @@ char *getTerminalAdjacencySubString(Cap *cap) {
     }
 }
 
-int32_t getTerminalAdjacencyLength(Cap *cap) {
+int64_t getTerminalAdjacencyLength(Cap *cap) {
     if(getTerminalAdjacencyLength_ignoreAdjacencies) {
         return 0;
     }
     char *cA = getTerminalAdjacencySubString(cap);
-    int32_t i = strlen(cA);
+    int64_t i = strlen(cA);
     free(cA);
     return i;
 }
@@ -84,7 +84,7 @@ Segment *getAdjacentCapsSegment(Cap *cap) {
 
 static bool capHasGivenEvents(Cap *cap, stList *eventStrings) {
     const char *headerSeq = event_getHeader(cap_getEvent(cap));
-    for (int32_t i = 0; i < stList_length(eventStrings); i++) {
+    for (int64_t i = 0; i < stList_length(eventStrings); i++) {
         if (strcmp(headerSeq, stList_get(eventStrings, i)) == 0) {
             return 1;
         }
@@ -151,7 +151,7 @@ bool hasCapNotInEvent(End *end, const char *eventString) {
 }
 
 bool hasCapInEvents(End *end, stList *eventStrings) {
-    for(int32_t i=0; i<stList_length(eventStrings); i++) {
+    for(int64_t i=0; i<stList_length(eventStrings); i++) {
         if(hasCapInEvent(end, stList_get(eventStrings, i))) {
             return 1;
         }
@@ -199,7 +199,7 @@ bool endsAreConnected(End *end1, End *end2, stList *eventStrings) {
     return 0;
 }
 
-bool capsAreAdjacent(Cap *cap1, Cap *cap2, int32_t *separationDistance) {
+bool capsAreAdjacent(Cap *cap1, Cap *cap2, int64_t *separationDistance) {
     if (cap_getName(cap2) != cap_getName(cap1) && cap_getCoordinate(cap1) != cap_getCoordinate(cap2)) { //This can happen if end1 == end2
         if (sequence_getMetaSequence(cap_getSequence(cap1)) == sequence_getMetaSequence(cap_getSequence(cap2))) {
             assert(strcmp(event_getHeader(cap_getEvent(cap1)), event_getHeader(
@@ -234,7 +234,7 @@ bool capsAreAdjacent(Cap *cap1, Cap *cap2, int32_t *separationDistance) {
     return 0;
 }
 
-bool endsAreAdjacent2(End *end1, End *end2, Cap **returnCap1, Cap **returnCap2, int32_t *minimumDistanceBetweenHaplotypeCaps, stList *eventStrings) {
+bool endsAreAdjacent2(End *end1, End *end2, Cap **returnCap1, Cap **returnCap2, int64_t *minimumDistanceBetweenHaplotypeCaps, stList *eventStrings) {
     End_InstanceIterator *instanceIterator = end_getInstanceIterator(end1);
     Cap *cap1;
     *returnCap1 = NULL;
@@ -246,7 +246,7 @@ bool endsAreAdjacent2(End *end1, End *end2, Cap **returnCap1, Cap **returnCap2, 
             End_InstanceIterator *instanceIterator2 = end_getInstanceIterator(end2);
             Cap *cap2;
             while ((cap2 = end_getNext(instanceIterator2)) != NULL) {
-                int32_t i;
+                int64_t i;
                 if (capsAreAdjacent(cap1, cap2, &i)) {
                     areAdjacent = 1;
                     if (i < *minimumDistanceBetweenHaplotypeCaps) {
@@ -263,7 +263,7 @@ bool endsAreAdjacent2(End *end1, End *end2, Cap **returnCap1, Cap **returnCap2, 
     return areAdjacent;
 }
 
-bool endsAreAdjacent(End *end1, End *end2, int32_t *minimumDistanceBetweenHaplotypeCaps, stList *eventStrings) {
+bool endsAreAdjacent(End *end1, End *end2, int64_t *minimumDistanceBetweenHaplotypeCaps, stList *eventStrings) {
     Cap *cap1 = NULL, *cap2 = NULL;
     return endsAreAdjacent2(end1, end2, &cap1, &cap2, minimumDistanceBetweenHaplotypeCaps, eventStrings);
 }

@@ -25,7 +25,7 @@ stHash *buildSegmentToContigPathHash(stList *contigPaths);
 /*
  * Returns the length of a given contig path in terms of the total number of bases in the segments it contains.
  */
-int32_t contigPathLength(stList *contigPath);
+int64_t contigPathLength(stList *contigPath);
 
 /*
  * Gets a hash of contig paths to their lengths (represented as stIntTuples).

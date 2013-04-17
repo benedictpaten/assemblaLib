@@ -18,9 +18,9 @@
  * A wrapper structure to represent parameters to the getCapCode function.
  */
 typedef struct _CapCodeParameters {
-        int32_t minimumNCount;
-        int32_t maxInsertionLength;
-        int32_t maxDeletionLength;
+        int64_t minimumNCount;
+        int64_t maxInsertionLength;
+        int64_t maxDeletionLength;
 } CapCodeParameters;
 
 /*
@@ -32,9 +32,9 @@ typedef struct _CapCodeParameters {
  * it is reclassified as simply an intra chromosomal rearrangement.
  *
  */
-CapCodeParameters *capCodeParameters_construct(int32_t minimumNCount,
-                                               int32_t maxInsertionLength,
-                                               int32_t maxDeletionLength);
+CapCodeParameters *capCodeParameters_construct(int64_t minimumNCount,
+                                               int64_t maxInsertionLength,
+                                               int64_t maxDeletionLength);
 
 /*
  * Frees the memory associated with a CapCodeParameters struct.
@@ -81,7 +81,7 @@ enum CapCode {
 /*
  * Gets a code indicating the type of structure the cap's adjacency is part of.
  */
-enum CapCode getCapCode(Cap *cap, Cap **otherCap, stList *haplotypeEventStrings, stList *contaminationEventStrings, int32_t *insertLength, int32_t *deleteLength,
+enum CapCode getCapCode(Cap *cap, Cap **otherCap, stList *haplotypeEventStrings, stList *contaminationEventStrings, int64_t *insertLength, int64_t *deleteLength,
                         CapCodeParameters *capCodeParameters);
 
 

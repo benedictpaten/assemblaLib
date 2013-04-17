@@ -12,9 +12,9 @@
 #include "adjacencyTraversal.h"
 #include "adjacencyClassification.h"
 
-int32_t getNumberOfNs(const char *string) {
-    int32_t j = 0;
-    for (int32_t i = 0; i < strlen(string); i++) {
+int64_t getNumberOfNs(const char *string) {
+    int64_t j = 0;
+    for (int64_t i = 0; i < strlen(string); i++) {
         if (toupper(string[i]) == 'N') {
             j++;
         }
@@ -22,22 +22,22 @@ int32_t getNumberOfNs(const char *string) {
     return j;
 }
 
-static int32_t getNumberOfNsInSegment(Segment *segment) {
+static int64_t getNumberOfNsInSegment(Segment *segment) {
     char *string = segment_getString(segment);
-    int32_t i = getNumberOfNs(string);
+    int64_t i = getNumberOfNs(string);
     free(string);
     return i;
 }
 
-static int32_t getNumberOfNsInAdjacency(Cap *cap) {
+static int64_t getNumberOfNsInAdjacency(Cap *cap) {
     char *cA = getTerminalAdjacencySubString(cap);
-    int32_t i = getNumberOfNs(cA);
+    int64_t i = getNumberOfNs(cA);
     free(cA);
     return i;
 }
 
 bool getCapGetAtEndOfPath(Cap *cap, Cap **pathEndCap,
-        int32_t *pathLength, int32_t *nCount, stList *haplotypeEventStrings, stList *contaminationEventStrings) {
+        int64_t *pathLength, int64_t *nCount, stList *haplotypeEventStrings, stList *contaminationEventStrings) {
     //Account for length of adjacency
     *pathLength += getTerminalAdjacencyLength(cap);
     *nCount += getNumberOfNsInAdjacency(cap);
@@ -65,11 +65,11 @@ bool getCapGetAtEndOfPath(Cap *cap, Cap **pathEndCap,
             pathEndCap, pathLength, nCount, haplotypeEventStrings, contaminationEventStrings);
 }
 
-static int32_t getBoundingNsP(Segment *segment) {
+static int64_t getBoundingNsP(Segment *segment) {
     char *string = segment_getString(segment);
     assert(string != NULL);
-    int32_t k = 0;
-    for (int32_t j = 0; j < strlen(string) && j < 5; j++) {
+    int64_t k = 0;
+    for (int64_t j = 0; j < strlen(string) && j < 5; j++) {
         if (toupper(string[j]) == 'N') {
             k++;
         }
@@ -78,7 +78,7 @@ static int32_t getBoundingNsP(Segment *segment) {
     return k;
 }
 
-static int32_t getBoundingNs(Cap *cap) {
+static int64_t getBoundingNs(Cap *cap) {
     assert(cap != NULL);
     Segment *segment = getCapsSegment(cap);
     if (segment == NULL) {
@@ -98,8 +98,8 @@ static int32_t getBoundingNs(Cap *cap) {
     }
 }
 
-CapCodeParameters *capCodeParameters_construct(int32_t minimumNCount,
-        int32_t maxInsertionLength, int32_t maxDeletionLength) {
+CapCodeParameters *capCodeParameters_construct(int64_t minimumNCount,
+        int64_t maxInsertionLength, int64_t maxDeletionLength) {
     CapCodeParameters *capCodeParameters = st_malloc(sizeof(CapCodeParameters));
     capCodeParameters->minimumNCount = minimumNCount;
     capCodeParameters->maxInsertionLength = maxInsertionLength;
@@ -118,7 +118,7 @@ static stSortedSet *getEventStrings(End *end, stList *eventStrings) {
     Cap *cap;
     while ((cap = end_getNext(instanceIt)) != NULL) {
         const char *header = event_getHeader(cap_getEvent(cap));
-        for(int32_t i=0; i<stList_length(eventStrings); i++) {
+        for(int64_t i=0; i<stList_length(eventStrings); i++) {
             if(strcmp(stList_get(eventStrings, i), header) == 0) {
                 stSortedSet_insert(eventStringsSet,
                                    (void *) header);
@@ -156,8 +156,8 @@ static enum CapCode getHaplotypeSwitchCode(Cap *cap, stList *eventStrings) {
     return code1;
 }
 
-enum CapCode getCapCode(Cap *cap, Cap **otherCap, stList *haplotypeEventStrings, stList *contaminationEventStrings, int32_t *insertLength,
-        int32_t *deleteLength, CapCodeParameters *capCodeParameters) {
+enum CapCode getCapCode(Cap *cap, Cap **otherCap, stList *haplotypeEventStrings, stList *contaminationEventStrings, int64_t *insertLength,
+        int64_t *deleteLength, CapCodeParameters *capCodeParameters) {
     assert(hasCapInEvents(cap_getEnd(cap), haplotypeEventStrings));
     if (trueAdjacency(cap, haplotypeEventStrings)) {
         return getHaplotypeSwitchCode(cap, haplotypeEventStrings);
@@ -167,7 +167,7 @@ enum CapCode getCapCode(Cap *cap, Cap **otherCap, stList *haplotypeEventStrings,
 
     End *end = cap_getEnd(cap);
     Cap *pathEndCap = NULL;
-    int32_t pathLength = 0, nCount = 0;
+    int64_t pathLength = 0, nCount = 0;
     bool pathEndsOnStub = !getCapGetAtEndOfPath(cap, &pathEndCap, &pathLength,
             &nCount, haplotypeEventStrings, contaminationEventStrings);
     *otherCap = pathEndCap;
@@ -188,7 +188,7 @@ enum CapCode getCapCode(Cap *cap, Cap **otherCap, stList *haplotypeEventStrings,
 
     if (hasCapInEvents(otherPathEnd, haplotypeEventStrings)) {
         if (endsAreConnected(end, otherPathEnd, haplotypeEventStrings)) {
-            int32_t minimumHaplotypeDistanceBetweenEnds;
+            int64_t minimumHaplotypeDistanceBetweenEnds;
             //Establish if indel or order breaking rearrangement
             if (endsAreAdjacent(end, otherPathEnd,
                             &minimumHaplotypeDistanceBetweenEnds, haplotypeEventStrings)) {

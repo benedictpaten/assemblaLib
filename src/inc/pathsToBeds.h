@@ -14,12 +14,12 @@
 #include "scaffoldPaths.h"
 
 typedef struct _sequenceInterval {
-        int32_t start;
-        int32_t end;
+        int64_t start;
+        int64_t end;
         char *sequenceName;
 } SequenceInterval;
 
-SequenceInterval *sequenceInterval_construct(int32_t start, int32_t end,
+SequenceInterval *sequenceInterval_construct(int64_t start, int64_t end,
         const char *sequenceName);
 
 void sequenceInterval_destruct(SequenceInterval *sequenceInterval);

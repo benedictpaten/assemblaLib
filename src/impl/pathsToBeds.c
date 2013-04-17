@@ -14,7 +14,7 @@
 #include "scaffoldPaths.h"
 #include "pathsToBeds.h"
 
-SequenceInterval *sequenceInterval_construct(int32_t start, int32_t end,
+SequenceInterval *sequenceInterval_construct(int64_t start, int64_t end,
         const char *sequenceName) {
     SequenceInterval *sequenceInterval = st_malloc(sizeof(SequenceInterval));
     assert(end >= start);
@@ -61,7 +61,7 @@ static void addInterval(Segment *_5Segment, Segment *_3Segment,
                             - sequence_getStart(sequence),
                     sequence_getHeader(sequence));
     stList_append(intervals, sequenceInterval);
-    st_logDebug("Built a path interval %s %i %i\n",
+    st_logDebug("Built a path interval %s %" PRIi64 " %" PRIi64 "\n",
             sequenceInterval->sequenceName, sequenceInterval->start,
             sequenceInterval->end);
 }
@@ -69,11 +69,11 @@ static void addInterval(Segment *_5Segment, Segment *_3Segment,
 stList *getContigPathIntervals(Flower *flower, stList *contigPaths,
         const char *chosenEventString, stList *eventStrings) {
     assert(stList_length(contigPaths) > 0);
-    st_logDebug("Getting contig path intervals for %i contig paths\n",
+    st_logDebug("Getting contig path intervals for %" PRIi64 " contig paths\n",
             stList_length(contigPaths));
     stList *intervals = stList_construct3(0,
             (void(*)(void *)) sequenceInterval_destruct);
-    for (int32_t i = 0; i < stList_length(contigPaths); i++) {
+    for (int64_t i = 0; i < stList_length(contigPaths); i++) {
         stList *contigPath = stList_get(contigPaths, i);
         addInterval(stList_get(contigPath, 0),
                 stList_get(contigPath, stList_length(contigPath) - 1),
@@ -84,24 +84,24 @@ stList *getContigPathIntervals(Flower *flower, stList *contigPaths,
 
 typedef struct _segmentAndPosition {
         Segment *segment;
-        int32_t position;
+        int64_t position;
 } SegmentAndPosition;
 
-static SegmentAndPosition *segmentAndPosition_construct(Segment *segment, int32_t position) {
+static SegmentAndPosition *segmentAndPosition_construct(Segment *segment, int64_t position) {
     SegmentAndPosition *segmentAndPosition = st_malloc(sizeof(SegmentAndPosition));
     segmentAndPosition->segment = segment;
     segmentAndPosition->position = position;
     return segmentAndPosition;
 }
 
-static bool isInSet(stSortedSet *items, Segment *segment, int32_t position) {
+static bool isInSet(stSortedSet *items, Segment *segment, int64_t position) {
     SegmentAndPosition *segmentAndPosition = segmentAndPosition_construct(segment, position);
     bool b = stSortedSet_search(items, segmentAndPosition) != NULL;
     free(segmentAndPosition);
     return b;
 }
 
-static void addToSet(stSortedSet *items, Segment *segment, int32_t position) {
+static void addToSet(stSortedSet *items, Segment *segment, int64_t position) {
     assert(!isInSet(items, segment, position));
     SegmentAndPosition *segmentAndPosition = segmentAndPosition_construct(segment, position);
     stSortedSet_insert(items, segmentAndPosition);
@@ -115,17 +115,17 @@ int segmentAndPosition_cmpFn(SegmentAndPosition *a, SegmentAndPosition *b) {
     return i;
 }
 
-static int32_t getSplitContigPathIntervalsP(Segment *segment,
-        stList *contigPath, stSortedSet *seen, int32_t i) {
+static int64_t getSplitContigPathIntervalsP(Segment *segment,
+        stList *contigPath, stSortedSet *seen, int64_t i) {
     addToSet(seen, segment, i);
-    //st_uglyf("Gooo %lli %i %i %s %i %i\n", segment_getName(segment), segment_getStart(segment), segment_getLength(segment), sequence_getHeader(segment_getSequence(segment)), i, stList_length(contigPath));
+    //st_uglyf("Gooo %lli %" PRIi64 " %" PRIi64 " %s %" PRIi64 " %" PRIi64 "\n", segment_getName(segment), segment_getStart(segment), segment_getLength(segment), sequence_getHeader(segment_getSequence(segment)), i, stList_length(contigPath));
     assert(
             segment_getBlock(segment) == segment_getBlock(
                     stList_get(contigPath, i)));
     if (i + 1 < stList_length(contigPath)) {
         Segment *segment2 = getAdjacentCapsSegment(segment_get3Cap(segment));
         if (segment2 != NULL) {
-            //st_uglyf("Gooo2 %lli %i %i %s\n", segment_getName(segment2), segment_getStart(segment2), segment_getLength(segment2), sequence_getHeader(segment_getSequence(segment2)));
+            //st_uglyf("Gooo2 %lli %" PRIi64 " %" PRIi64 " %s\n", segment_getName(segment2), segment_getStart(segment2), segment_getLength(segment2), sequence_getHeader(segment_getSequence(segment2)));
             assert(segment_getStrand(segment2) == segment_getStrand(segment));
             assert(getAdjacentCapsSegment(segment_get5Cap(segment2)) == segment);
             assert(!isInSet(seen, segment2, i+1));
@@ -140,7 +140,7 @@ static int32_t getSplitContigPathIntervalsP(Segment *segment,
 }
 
 static bool segmentIsInEvents(Segment *segment, stList *eventStrings) {
-    for (int32_t i = 0; i < stList_length(eventStrings); i++) {
+    for (int64_t i = 0; i < stList_length(eventStrings); i++) {
         if (strcmp(event_getHeader(segment_getEvent(segment)),
                 stList_get(eventStrings, i)) == 0) {
             return 1;
@@ -152,15 +152,15 @@ static bool segmentIsInEvents(Segment *segment, stList *eventStrings) {
 stList *getSplitContigPathIntervals(Flower *flower, stList *contigPaths,
         const char *chosenEventString, stList *eventStrings) {
     assert(stList_length(contigPaths) > 0);
-    st_logDebug("Getting split contig path intervals for %i contig paths\n",
+    st_logDebug("Getting split contig path intervals for %" PRIi64 " contig paths\n",
             stList_length(contigPaths));
     stList *intervals = stList_construct3(0,
             (void(*)(void *)) sequenceInterval_destruct);
-    for (int32_t i = 0; i < stList_length(contigPaths); i++) {
+    for (int64_t i = 0; i < stList_length(contigPaths); i++) {
         stList *contigPath = stList_get(contigPaths, i);
         stSortedSet *seen = stSortedSet_construct3((int (*)(const void *, const void *))segmentAndPosition_cmpFn, free);
         assert(getSplitContigPathIntervalsP(stList_get(contigPath, 0),contigPath, seen, 0) == stList_length(contigPath)-1);
-        for (int32_t j = 0; j < stList_length(contigPath); j++) {
+        for (int64_t j = 0; j < stList_length(contigPath); j++) {
             Segment *_5Segment = stList_get(contigPath, j);
             assert(isInSet(seen, _5Segment, j));
             Block_InstanceIterator *it = block_getInstanceIterator(
@@ -170,7 +170,7 @@ stList *getSplitContigPathIntervals(Flower *flower, stList *contigPaths,
                 if (segmentIsInEvents(segment2, eventStrings)) {
                     if (!isInSet(seen, segment2, j)) {
                         //st_uglyf("Starting interval\n");
-                        int32_t k = getSplitContigPathIntervalsP(segment2,
+                        int64_t k = getSplitContigPathIntervalsP(segment2,
                                 contigPath, seen, j);
                         Segment *_3Segment = stList_get(contigPath, k);
                         addInterval(_5Segment, _3Segment, intervals);
@@ -209,7 +209,7 @@ stList *getScaffoldPathIntervals(Flower *flower, const char *chosenEventString,
             stList_getSortedSet(scaffoldPathsList, NULL);
     stList_destruct(scaffoldPathsList);
     scaffoldPathsList = stSortedSet_getList(scaffoldPathsSet);
-    for (int32_t i = 0; i < stList_length(scaffoldPathsList); i++) {
+    for (int64_t i = 0; i < stList_length(scaffoldPathsList); i++) {
         stSortedSet *scaffoldPath = stList_get(scaffoldPathsList, i);
         stList *scaffoldPathList = stSortedSet_getList(scaffoldPath);
         stList *scaffoldPathIntervals = getContigPathIntervals(flower,

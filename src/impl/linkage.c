@@ -9,7 +9,7 @@
 #include "adjacencyTraversal.h"
 
 static bool stringIsInList(const char *eventString, stList *eventStrings) {
-    for (int32_t i = 0; i < stList_length(eventStrings); i++) {
+    for (int64_t i = 0; i < stList_length(eventStrings); i++) {
         const char *eventString2 = stList_get(eventStrings, i);
         if (strcmp(eventString, eventString2) == 0) {
             return 0;
@@ -78,7 +78,7 @@ static void getOrderedSegmentsP(Flower *flower,
     flower_destructGroupIterator(groupIt);
 }
 
-static int32_t segmentCompareFn_coordinate;
+static int64_t segmentCompareFn_coordinate;
 static Name segmentCompareFn_metaSequence;
 static int segmentCompareFn(const void *segment1, const void *segment2) {
     Name name1 = segment1 == &segmentCompareFn_coordinate ? segmentCompareFn_metaSequence : metaSequence_getName(sequence_getMetaSequence(segment_getSequence((Segment *)segment1)));
@@ -111,7 +111,7 @@ stSortedSet *getOrderedSegments(Flower *flower) {
     return segments;
 }
 
-static Segment *getSegment(stSortedSet *sortedSegments, int32_t x, MetaSequence *metaSequence) {
+static Segment *getSegment(stSortedSet *sortedSegments, int64_t x, MetaSequence *metaSequence) {
     segmentCompareFn_coordinate = x;
     segmentCompareFn_metaSequence = metaSequence_getName(metaSequence);
     Segment *segment = stSortedSet_searchLessThanOrEqual(sortedSegments,
@@ -130,14 +130,14 @@ static Segment *getSegment(stSortedSet *sortedSegments, int32_t x, MetaSequence 
     return NULL;
 }
 
-void pickAPairOfPointsP(MetaSequence *metaSequence, int32_t *x, int32_t *y, double proportionOfSequence) {
+void pickAPairOfPointsP(MetaSequence *metaSequence, int64_t *x, int64_t *y, double proportionOfSequence) {
     assert(metaSequence_getLength(metaSequence) > 20);
     assert(proportionOfSequence > 0);
     assert(proportionOfSequence <= 1.0);
     double interval = log10(metaSequence_getLength(metaSequence) * proportionOfSequence - 10);
     double j = RANDOM();
     double i = interval * j;
-    int32_t size = (int32_t) pow(10.0, i) + 1;
+    int64_t size = (int64_t) pow(10.0, i) + 1;
     assert(size >= 1);
     assert(size < metaSequence_getLength(metaSequence));
     *x = metaSequence_getStart(metaSequence) + RANDOM()
@@ -150,11 +150,11 @@ void pickAPairOfPointsP(MetaSequence *metaSequence, int32_t *x, int32_t *y, doub
                     metaSequence));
 }
 
-void pickAPairOfPoints(MetaSequence *metaSequence, int32_t *x, int32_t *y) {
+void pickAPairOfPoints(MetaSequence *metaSequence, int64_t *x, int64_t *y) {
     pickAPairOfPointsP(metaSequence, x, y, 1.0);
 }
 
-bool linked(Segment *segmentX, Segment *segmentY, int32_t difference,
+bool linked(Segment *segmentX, Segment *segmentY, int64_t difference,
         const char *eventString, bool *aligned) {
     assert(segment_getStrand(segmentX));
     assert(segment_getStrand(segmentY));
@@ -179,7 +179,7 @@ bool linked(Segment *segmentX, Segment *segmentY, int32_t difference,
                                 == sequence_getMetaSequence(
                                         segment_getSequence(segmentY2))) { //Have the same assembly sequence
                             //Now check if the two segments are connected by a path of adjacency from the 3' end of segmentX to the 5' end of segmentY.
-                            int32_t separationDistance;
+                            int64_t separationDistance;
                             if (capsAreAdjacent(segment_get3Cap(segmentX2),
                                     segment_get5Cap(segmentY2),
                                     &separationDistance)) {
@@ -229,19 +229,19 @@ static bool duplicated(Segment *segment) {
 }
 
 void samplePoints(Flower *flower, MetaSequence *metaSequence,
-        const char *eventString, int32_t sampleNumber, int32_t *correct, int32_t *aligned,
-        int32_t *samples, int32_t bucketNumber, double bucketSize, stSortedSet *sortedSegments,
+        const char *eventString, int64_t sampleNumber, int64_t *correct, int64_t *aligned,
+        int64_t *samples, int64_t bucketNumber, double bucketSize, stSortedSet *sortedSegments,
         bool duplication, double proportionOfSequence) {
     if(metaSequence_getLength(metaSequence) <= 1) {
         return;
     }
-    for (int32_t i = 0; i < sampleNumber; i++) {
-        int32_t x, y;
+    for (int64_t i = 0; i < sampleNumber; i++) {
+        int64_t x, y;
         pickAPairOfPointsP(metaSequence, &x, &y, proportionOfSequence);
         int64_t diff = y - x;
         assert(diff >= 1);
-        int32_t bucket = log10(diff) * bucketSize;
-        //st_uglyf("I have %i %f %i %i\n", (int32_t)diff, bucketSize, bucket, bucketNumber);
+        int64_t bucket = log10(diff) * bucketSize;
+        //st_uglyf("I have %" PRIi64 " %f %" PRIi64 " %" PRIi64 "\n", (int64_t)diff, bucketSize, bucket, bucketNumber);
         assert(bucket < bucketNumber);
         assert(bucket >= 0);
         samples[bucket]++;
