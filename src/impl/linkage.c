@@ -261,3 +261,39 @@ void samplePoints(Flower *flower, MetaSequence *metaSequence,
     }
 }
 
+void samplePointsWithOtherReference(Flower *flower, MetaSequence *metaSequence,
+        const char *eventString, const char *otherEventString, int64_t sampleNumber, int64_t *correct, int64_t *aligned,
+        int64_t *samples, int64_t bucketNumber, double bucketSize, stSortedSet *sortedSegments,
+        bool duplication, double proportionOfSequence) {
+    if(metaSequence_getLength(metaSequence) <= 1) {
+        return;
+    }
+    for (int64_t i = 0; i < sampleNumber; i++) {
+        int64_t x, y;
+        pickAPairOfPointsP(metaSequence, &x, &y, proportionOfSequence);
+        int64_t diff = y - x;
+        assert(diff >= 1);
+        int64_t bucket = log10(diff) * bucketSize;
+        //st_uglyf("I have %" PRIi64 " %f %" PRIi64 " %" PRIi64 "\n", (int64_t)diff, bucketSize, bucket, bucketNumber);
+        assert(bucket < bucketNumber);
+        assert(bucket >= 0);
+        samples[bucket]++;
+        Segment *segmentX = getSegment(sortedSegments, x, metaSequence);
+        if (segmentX != NULL  && (duplication || !duplicated(segmentX))) {
+            Segment *segmentY = getSegment(sortedSegments, y, metaSequence);
+            if (segmentY != NULL && (duplication || !duplicated(segmentX))) {
+                bool b;
+                linked(segmentX, segmentY, diff, otherEventString, &b);
+                if(b) {
+                    if(linked(segmentX, segmentY, diff, eventString, &b)) {
+                        correct[bucket]++;
+                    }
+                    if(b) {
+                        aligned[bucket]++;
+                    }
+                }
+            }
+        }
+    }
+}
+

@@ -42,6 +42,11 @@ void samplePoints(Flower *flower, MetaSequence *metaSequence,
         int64_t sampleNumber, int64_t *correct, int64_t *aligned, int64_t *samples,
         int64_t bucketNumber, double bucketSize, stSortedSet *sortedSegments,  bool duplication, double proportionOfSequence);
 
+void samplePointsWithOtherReference(Flower *flower, MetaSequence *metaSequence,
+        const char *eventString, const char *otherEventString, int64_t sampleNumber, int64_t *correct, int64_t *aligned,
+        int64_t *samples, int64_t bucketNumber, double bucketSize, stSortedSet *sortedSegments,
+        bool duplication, double proportionOfSequence);
+
 /*
  * Gets all the meta sequences in the flower that are identified by the given set of event strings.
  */
